@@ -1,1 +1,23 @@
-{"version": 2, "builds": [{"src": "backend/server.js", "use": "@vercel/node"}], "routes": [{"src": "/api/(.*)", "dest": "/backend/server.js"}, {"src": "/world_map/(.*)", "dest": "/world_map/$1"}, {"src": "/assets/(.*)", "dest": "/assets/$1"}, {"src": "/world_img/(.*)", "dest": "/world_img/$1"}, {"src": "/world_number/(.*)", "dest": "/world_number/$1"}, {"src": "/", "dest": "/index.html"}]}
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "**/*.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
