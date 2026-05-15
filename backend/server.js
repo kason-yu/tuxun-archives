@@ -204,3 +204,5 @@ app.listen(PORT, () => {
   console.log(`Countries in database: ${count}`);
   console.log(`Headers: ${db.headers.join(', ')}`);
 });
+
+module.exports = app;
