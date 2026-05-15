@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国际手机号识别</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
+        body { max-width: 600px; margin: 50px auto; padding: 0 20px; background: #f5f7fa; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; margin-bottom: 25px; color: #333; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #555; }
+        input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none; }
+        input:focus { border-color: #409eff; }
+        .result { padding: 15px; border-radius: 6px; margin-top: 20px; min-height: 60px; line-height: 1.6; }
+        .success { background: #e6f7ff; border: 1px solid #91d5ff; color: #0066cc; }
+        .error { background: #fff2f0; border: 1px solid #ffccc7; color: #cf1322; }
+        .tip { font-size: 12px; color: #999; margin-top: 5px; }
+        .match-item { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed #b3d8ff; }
+        .match-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🌍 国际手机号识别</h2>
+        <div class="input-group">
+            <label>输入手机号（支持带/不带国家码）</label>
+            <input type="text" id="phone" placeholder="例如：13800138000、+8613800138000">
+            <div class="tip">已修复CSV正则含逗号的解析Bug</div>
+        </div>
+        <div id="result" class="result">加载规则中...</div>
+    </div>
+
+<script>
+let rules = [];
+
+// 从 CSV 加载规则
+async function loadRules() {
+    try {
+        const res = await fetch("number.csv");
+        const text = await res.text();
+        parseCSV(text);
+        document.getElementById("result").innerText = "规则加载完成，请输入手机号";
+    } catch (e) {
+        document.getElementById("result").innerText = "⚠️ 请将 number.csv 放在同一目录下";
+    }
+}
+
+// 【关键修复】支持带引号字段的CSV解析
+function parseCSV(text) {
+    const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+    lines.shift(); // 去掉表头
+
+    rules = lines.map(line => {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const nextChar = line[i + 1];
+            
+            if (char === '"') {
+                if (inQuotes && nextChar === '"') {
+                    // 转义双引号："" -> "
+                    current += '"';
+                    i++;
+                } else {
+                    // 切换引号状态
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                // 不在引号内的逗号才是字段分隔符
+                result.push(current.trim());
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        // 加入最后一个字段
+        if (current !== undefined) {
+            result.push(current.trim());
+        }
+
+        // 确保至少有3个字段
+        if (result.length >= 3) {
+            return {
+                region: result[0],
+                code: result[1],
+                regex: result[2]
+            };
+        }
+        return null;
+    }).filter(rule => rule !== null);
+}
+
+// 识别手机号（返回所有匹配结果）
+function detect() {
+    const input = document.getElementById("phone").value.replace(/[\s\-()+]/g, '');
+    const result = document.getElementById("result");
+
+    if (!input) {
+        result.className = "result";
+        result.innerText = "请输入手机号";
+        return;
+    }
+
+    // 收集所有匹配的规则
+    const matches = [];
+
+    for (let rule of rules) {
+        try {
+            // 匹配：带国家码（code + 正则）
+            const fullPattern = new RegExp(`^${rule.code}${rule.regex.slice(1, -1)}$`);
+            if (fullPattern.test(input)) {
+                matches.push(rule);
+                continue;
+            }
+            // 匹配：不带国家码（直接正则）
+            const purePattern = new RegExp(rule.regex);
+            if (purePattern.test(input)) {
+                matches.push(rule);
+            }
+        } catch (e) {
+            // 忽略正则错误的行
+            continue;
+        }
+    }
+
+    // 显示结果
+    if (matches.length > 0) {
+        result.className = "result success";
+        let html = `<strong>✅ 找到 ${matches.length} 个匹配结果：</strong><br><br>`;
+        matches.forEach((rule, index) => {
+            html += `<div class="match-item">
+                <strong>${index + 1}. ${rule.region}</strong><br>
+                国家码：+${rule.code}<br>
+                正则：<code>${rule.regex}</code>
+            </div>`;
+        });
+        result.innerHTML = html;
+    } else {
+        result.className = "result error";
+        result.innerText = "❌ 未识别的号码格式";
+    }
+}
+
+// 初始化
+loadRules();
+document.getElementById("phone").addEventListener("input", detect);
+</script>
+</body>
+</html>

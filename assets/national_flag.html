@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-Cn">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>世界国旗</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                min-height: 200vh; /* 确保页面有足够的滚动空间 */
+                font-family: Arial, sans-serif;
+                overflow-x: hidden;
+            }
+            
+            /* 顶部背景容器 */
+            .top-background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-image: url('世界国旗.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                z-index: -1;
+                transition: opacity 0.5s ease;
+            }
+            
+            /* 主背景 */
+            .main-background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-image: url('图寻学院0.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                z-index: -2;
+                opacity: 0;
+                transition: opacity 0.5s ease;
+            }
+            
+            /* 内容容器 */
+            .container {
+                position: relative;
+                top: 100vh;
+                background-color: rgba(255, 255, 255, 0.8);
+                max-width: 80%;
+                margin: 40px auto;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                transform: translateY(50px);
+                opacity: 0;
+                transition: all 0.8s ease;
+            }
+            
+            /* 当滚动到一定位置时的样式 */
+            .container.visible {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            
+            h1 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 30px;
+            }
+            
+            .flag-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+                margin-top: 20px;
+            }
+            
+            .flag-item {
+                background-color: white;
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+            
+            .flag-item h3 {
+                margin: 10px 0 5px 0;
+                font-size: 16px;
+                color: #555;
+            }
+            
+            .flag-item p {
+                margin: 0;
+                font-size: 14px;
+                color: #777;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 顶部背景 -->
+        <div class="top-background"></div>
+        
+        <!-- 主背景 -->
+        <div class="main-background"></div>
+        
+        <!-- 内容容器 -->
+        <div class="container">
+            <h1>世界国旗</h1>
+        </div>
+        
+        <script>
+            // 监听滚动事件
+            window.addEventListener('scroll', function() {
+                const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
+                
+                // 顶部背景的透明度变化
+                const topBackground = document.querySelector('.top-background');
+                const mainBackground = document.querySelector('.main-background');
+                const container = document.querySelector('.container');
+                
+                // 当滚动超过屏幕高度的20%时开始变化
+                const threshold = windowHeight * 0.2;
+                
+                if (scrollY > threshold) {
+                    // 计算透明度
+                    const opacity = Math.min(1, (scrollY - threshold) / (windowHeight * 0.3));
+                    topBackground.style.opacity = 1 - opacity;
+                    mainBackground.style.opacity = opacity;
+                    
+                    // 当滚动超过屏幕高度的40%时显示内容
+                    if (scrollY > windowHeight * 0.4) {
+                        container.classList.add('visible');
+                    }
+                } else {
+                    // 恢复初始状态
+                    topBackground.style.opacity = 1;
+                    mainBackground.style.opacity = 0;
+                    container.classList.remove('visible');
+                }
+            });
+        </script>
+    </body>
+</html>
