@@ -6,7 +6,11 @@
       "use": "@vercel/node"
     },
     {
-      "src": "**/*.html",
+      "src": "{assets,backend,world_map,world_img,world_number}/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.html",
       "use": "@vercel/static"
     }
   ],
