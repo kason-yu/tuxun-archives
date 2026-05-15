@@ -10,7 +10,7 @@ app.use(express.json());
 
 // Supabase 配置
 const supabaseUrl = process.env.SUPABASE_URL || 'https://adqgeizddbitaovmhui.supabase.co';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || 'sb_publishable_r_VrgOqJ49mBrAvdZ_hTmg_uKE1wdgz';
+const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcWdlaXpkYmRpdGFhb3ZtaHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MjkyNDQsImV4cCI6MjA5NDQwNTI0NH0.sOOAEuAfO-Fy3sD_3FZCVm4Oqb8TIYkMnFEbJAvYcTA';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // ========== 列管理接口 ==========
