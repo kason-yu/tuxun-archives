@@ -97,25 +97,7 @@ app.get('/api/selected-columns', (req, res) => {
 
 app.put('/api/selected-columns', (req, res) => {
   const { columns, modes } = req.body;
-
-  // 🔒 保障2：后端验证 - 确保所有列名都存在于 data.json 的 headers 中
-  const db = readDB();
-  const validHeaders = db.headers || [];
-
-  if (Array.isArray(columns)) {
-    const invalidCols = columns.filter(col => !validHeaders.includes(col));
-    if (invalidCols.length > 0) {
-      console.warn(`⚠️ 后端拦截无效列名: ${invalidCols.join(', ')}`);
-      // 只保存有效的列
-      const validColumns = columns.filter(col => validHeaders.includes(col));
-      writeSelectedColumns(validColumns);
-    } else {
-      writeSelectedColumns(columns);
-    }
-  } else {
-    writeSelectedColumns([]);
-  }
-
+  writeSelectedColumns(columns || []);
   if (modes) {
     const modesPath = path.join(__dirname, 'selected-modes.json');
     fs.writeFileSync(modesPath, JSON.stringify(modes, null, 2), 'utf-8');
@@ -222,6 +204,3 @@ app.listen(PORT, () => {
   console.log(`Countries in database: ${count}`);
   console.log(`Headers: ${db.headers.join(', ')}`);
 });
-
-// Vercel Serverless Function 导出
-module.exports = app;

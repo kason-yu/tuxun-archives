@@ -11,5 +11,5 @@ npm-debug.log*
 # 排除其他 Git 仓库
 Yuki-Mikhail.github.io/
 
-# 排除超大文件（GitHub 限制 100MB）
+# 排除超大文件
 *.zip

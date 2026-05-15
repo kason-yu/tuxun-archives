@@ -337,13 +337,13 @@
   </div>
 
   <!-- 编辑列弹窗（新增列确认后弹出，引导用户点击国家进行编辑） -->
-  <div class="modal" id="edit-mode-modal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);display:none;z-index:1000;pointer-events:none;">
-    <div class="modal-content" id="edit-mode-modal-content" style="position:absolute;top:100px;right:50px;background:white;padding:20px;border-radius:8px;width:450px;display:flex;flex-direction:column;gap:15px;pointer-events:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3);cursor:move;">
-      <div style="display:flex;justify-content:space-between;align-items:center;cursor:move;" id="edit-modal-drag-handle">
+  <div class="modal" id="edit-mode-modal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);display:none;align-items:center;justify-content:center;z-index:1000;pointer-events:none;">
+    <div class="modal-content" style="background:white;padding:20px;border-radius:8px;width:450px;display:flex;flex-direction:column;gap:15px;pointer-events:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
         <h3 style="margin:0;" id="edit-modal-title">编辑列</h3>
-        <span style="cursor:pointer;font-size:20px;color:#999;padding:5px;" id="edit-modal-close">&times;</span>
+        <span style="cursor:pointer;font-size:20px;color:#999;" id="edit-modal-close">&times;</span>
       </div>
-      <p style="margin:0;color:#666;font-size:14px;line-height:1.6;" id="edit-modal-hint">类型：布尔（点击国家切换 0/1）<br>请点击地图上的国家（如误点请再次点击即可取消）</p>
+      <p style="margin:0;color:#666;font-size:14px;" id="edit-modal-hint">请点击地图上的国家开始编辑</p>
       <div style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;" id="edit-modal-status">
         <!-- 动态显示最近编辑的国家 -->
         <div style="color:#999;font-size:13px;">暂无编辑记录</div>
@@ -359,7 +359,7 @@
 
   <script>
     // ============ 配置 ============
-    const API_BASE = window.location.origin; // 自动适配当前域名（本地开发或 Vercel 部署）
+    const API_BASE = 'http://localhost:3000'; // TODO: 部署后替换为实际 API 地址
 
     // ============ 全局数据 ============
     let csvData = [];
@@ -1068,58 +1068,6 @@
       document.getElementById("number-cancel").onclick = () => {
         document.getElementById("number-input-modal").style.display = "none";
       };
-
-      // 🎯 新增：编辑模态框拖拽功能
-      const modalContent = document.getElementById("edit-mode-modal-content");
-      const dragHandle = document.getElementById("edit-modal-drag-handle");
-      
-      if (modalContent && dragHandle) {
-        let isDragging = false;
-        let currentX;
-        let currentY;
-        let initialX;
-        let initialY;
-        let xOffset = 0;
-        let yOffset = 0;
-
-        dragHandle.addEventListener("mousedown", (e) => {
-          if (e.target.id === "edit-modal-close") return; // 不拦截关闭按钮的点击
-          
-          isDragging = true;
-          initialX = e.clientX - xOffset;
-          initialY = e.clientY - yOffset;
-          
-          console.log("🖱️ [DRAG] 开始拖拽");
-          
-          // 防止文本选择
-          e.preventDefault();
-        });
-
-        document.addEventListener("mousemove", (e) => {
-          if (!isDragging) return;
-          
-          e.preventDefault();
-          
-          currentX = e.clientX - initialX;
-          currentY = e.clientY - initialY;
-          
-          xOffset = currentX;
-          yOffset = currentY;
-          
-          modalContent.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
-        });
-
-        document.addEventListener("mouseup", (e) => {
-          if (!isDragging) return;
-          
-          isDragging = false;
-          console.log("✅ [DRAG] 结束拖拽，位置:", { x: xOffset, y: yOffset });
-        });
-        
-        console.log("✅ [DEBUG] 编辑模态框拖拽功能已安装");
-      } else {
-        console.error("❌ 找不到编辑模态框或拖拽手柄");
-      }
       
       console.log("✅ [DEBUG] bindEvents 执行完成");
     }
