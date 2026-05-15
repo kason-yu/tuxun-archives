@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+.env
+.env.local
+
+# 排除其他 Git 仓库
+Yuki-Mikhail.github.io/

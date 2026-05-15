@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>世界地图</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 导航栏样式 */
+    #navbar {
+      padding: 10px 20px;
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      min-height: 60px;
+    }
+
+    /* 搜索区域 */
+    .search-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #column-search {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 200px;
+    }
+
+    /* 搜索结果下拉框 */
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 5px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      min-width: 200px;
+    }
+
+    .search-results.active {
+      display: block;
+    }
+
+    .search-result-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .search-result-item:hover {
+      background: #f0f0f0;
+    }
+
+    /* 选中的列标签 */
+    .selected-columns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .selected-column-tag {
+      background: #e1f5fe;
+      color: #01579b;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-btn {
+      background: #fff;
+      border: 1px solid #01579b;
+      color: #01579b;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .mode-btn.precise {
+      background: #01579b;
+      color: #fff;
+    }
+
+    .tag-close {
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 12px;
+      margin-left: 4px;
+    }
+
+    /* 功能按钮样式 */
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .func-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      background: #2196f3;
+      color: white;
+      cursor: pointer;
+    }
+
+    .func-btn:hover {
+      background: #1976d2;
+    }
+
+    .func-btn.save {
+      background: #4caf50;
+    }
+
+    .func-btn.save:hover {
+      background: #388e3c;
+    }
+
+    .func-btn.confirm {
+      background: #ff9800;
+    }
+
+    .func-btn.confirm:hover {
+      background: #f57c00;
+    }
+
+    /* 编辑状态区域 */
+    .edit-status {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 15px;
+      background: #fff3e0;
+      border-radius: 4px;
+    }
+
+    .edit-status.active {
+      display: flex;
+    }
+
+    .edit-status select, .edit-status input {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    /* 提示框 */
+    #tooltip {
+      position: absolute;
+      background: #333;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      pointer-events: none;
+      display: none;
+      z-index: 999;
+    }
+
+    /* 地图容器 */
+    #svg-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      overflow: hidden;
+      width: 100%;
+      height: calc(100vh - 80px);
+    }
+
+    #svg-container svg {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .config { display: none; }
+  </style>
+</head>
+
+<body>
+  <!-- 导航栏 -->
+  <div id="navbar">
+    <!-- 搜索区域 -->
+    <div class="search-group">
+      <input type="text" id="column-search" placeholder="搜索列名...">
+      <!-- 搜索结果下拉框 -->
+      <div class="search-results" id="search-results"></div>
+    </div>
+
+    <!-- 选中的列标签 -->
+    <div class="selected-columns" id="selected-columns"></div>
+
+    <!-- 编辑状态区域 -->
+    <div class="edit-status" id="edit-status">
+      <span id="edit-mode-text">新增列</span>
+      <select id="edit-column-type">
+        <option value="boolean">布尔类型</option>
+        <option value="number">数值类型</option>
+      </select>
+      <input type="text" id="edit-column-name" placeholder="输入列名">
+      <button class="func-btn confirm" id="edit-confirm-btn">确定</button>
+    </div>
+
+    <!-- 功能按钮 -->
+    <div class="btn-group">
+      <button class="func-btn" id="add-btn">新增</button>
+      <button class="func-btn save" id="save-btn">确定保存</button>
+      <button class="func-btn" id="cancel-btn" style="display:none;">取消</button>
+    </div>
+  </div>
+
+  <!-- 数值输入弹窗 -->
+  <div class="modal" id="number-input-modal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:1000;">
+    <div class="modal-content" style="background:white;padding:20px;border-radius:8px;width:400px;display:flex;flex-direction:column;gap:15px;">
+      <div class="form-row" style="display:flex;flex-direction:column;gap:5px;">
+        <label>输入数值</label>
+        <input type="number" id="number-value" placeholder="输入数值" style="padding:8px;border:1px solid #ddd;border-radius:4px;">
+      </div>
+      <div class="modal-btns" style="display:flex;justify-content:flex-end;gap:10px;">
+        <button class="cancel-btn" id="number-cancel" style="background:#f44336;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;">取消</button>
+        <button class="confirm-btn" id="number-confirm" style="background:#4caf50;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="svg-container"></div>
+  <div id="tooltip"></div>
+
+  <script>
+    // 全局数据存储
+    let csvData = [];
+    let csvHeaders = ["国家"];
+    let selectedColumns = [];
+    // ✅ 新增：存储每个列的模式（fuzzy=模糊，precise=精确）
+    let columnModes = {}; 
+    let currentEditColumn = {
+      name: "",
+      type: "",
+      mode: "",
+      active: false
+    };
+
+    // 初始化
+    Promise.all([
+      fetch("world.svg").then(res => res.text()),
+      fetch("geo.csv").then(res => res.text()).catch(err => {
+        console.warn("⚠️ geo.csv 读取失败或为空，使用默认空数据");
+        return "国家";
+      })
+    ]).then(([svgCode, csvText]) => {
+      document.getElementById("svg-container").innerHTML = svgCode;
+      parseCSV(csvText);
+      initMap();
+      bindEvents();
+      console.log("✅ 初始化完成，地图加载成功");
+      console.log("📊 CSV表头：", csvHeaders);
+    }).catch(err => {
+      console.error("❌ 加载失败：", err);
+      alert("SVG文件加载失败，请检查文件路径是否正确");
+    });
+
+    // 解析CSV数据
+    function parseCSV(csvText) {
+      if (!csvText || csvText.trim() === "") {
+        csvHeaders = ["国家"];
+        csvData = [];
+        return;
+      }
+
+      const lines = csvText.trim().split('\n');
+      if (lines.length === 0) {
+        csvHeaders = ["国家"];
+        csvData = [];
+        return;
+      }
+
+      csvHeaders = lines[0].split(',').map(h => h.trim());
+      if (!csvHeaders.includes("国家")) {
+        csvHeaders.unshift("国家");
+      }
+
+      csvData = lines.slice(1).map(line => {
+        const values = line.split(',').map(v => v.trim());
+        const row = {};
+        csvHeaders.forEach((header, idx) => {
+          const val = values[idx];
+          row[header] = isNaN(Number(val)) ? val : Number(val);
+        });
+        return row;
+      }).filter(row => row.国家);
+    }
+
+    // 标准化国家名
+    function normalizeCountryName(name) {
+      if (!name) return "";
+      return name.trim().toLowerCase();
+    }
+
+    // 精准匹配国家行
+    function getCountryRow(countryKey) {
+      return csvData.find(row => {
+        const rowCountry = row["国家"];
+        return normalizeCountryName(rowCountry) === countryKey;
+      });
+    }
+
+    // 自动新增不存在的国家
+    function addCountryToCSV(countryKey, originalName) {
+      const newRow = {};
+      csvHeaders.forEach(header => {
+        newRow[header] = header === "国家" ? originalName : 0;
+      });
+      newRow["国家"] = originalName;
+      csvData.push(newRow);
+      return newRow;
+    }
+
+    // 精准匹配当前国家的所有path
+    function getCountryPaths(countryKey) {
+      const allPaths = document.querySelectorAll("path");
+      return Array.from(allPaths).filter(path => {
+        const cls = path.className?.baseVal || "";
+        const name = path.getAttribute("name") || "";
+        const normalizedCls = normalizeCountryName(cls);
+        const normalizedName = normalizeCountryName(name);
+        return normalizedCls === countryKey || normalizedName === countryKey;
+      });
+    }
+
+    // 初始化地图
+    function initMap() {
+      const tooltip = document.getElementById("tooltip");
+      const paths = document.querySelectorAll("path");
+
+      paths.forEach(path => {
+        const cls = path.className?.baseVal || "";
+        const name = path.getAttribute("name") || "";
+        const originalName = cls.trim() || name.trim();
+        const countryKey = normalizeCountryName(originalName);
+        if (!countryKey) return;
+
+        updateCountryColor(path, countryKey, originalName);
+
+        path.addEventListener("mouseenter", () => {
+          tooltip.innerText = originalName;
+          tooltip.style.display = "block";
+        });
+        path.addEventListener("mousemove", (e) => {
+          tooltip.style.left = e.pageX + 10 + "px";
+          tooltip.style.top = e.pageY + 10 + "px";
+        });
+        path.addEventListener("mouseleave", () => {
+          tooltip.style.display = "none";
+        });
+
+        path.addEventListener("click", () => {
+          handleCountryClick(countryKey, originalName);
+        });
+      });
+    }
+
+    // ✅ 修复：颜色更新函数，支持模糊/精确模式
+    function updateCountryColor(path, countryKey, originalName) {
+      // 编辑模式下：只显示当前编辑列的颜色
+      if (currentEditColumn.active && currentEditColumn.name) {
+        let countryRow = getCountryRow(countryKey);
+        if (!countryRow) return;
+        
+        const val = Number(countryRow[currentEditColumn.name] || 0);
+        if (currentEditColumn.type === "boolean") {
+          const targetColor = val === 1 ? "#ff0000" : "#ffffff";
+          path.removeAttribute("fill");
+          path.style.fill = targetColor;
+        } else if (currentEditColumn.type === "number") {
+          const allValues = csvData.map(row => Number(row[currentEditColumn.name] || 0));
+          const maxVal = Math.max(...allValues, 1);
+          const normalized = Math.min(Math.max(val / maxVal, 0), 1);
+          const r = 255;
+          const g = Math.floor(255 * (1 - normalized));
+          const b = Math.floor(255 * (1 - normalized));
+          path.removeAttribute("fill");
+          path.style.fill = `rgb(${r}, ${g}, ${b})`;
+        }
+        return;
+      }
+
+      // 筛选模式下
+      if (selectedColumns.length === 0) {
+        path.style.fill = "#ffffff";
+        return;
+      }
+
+      let countryRow = getCountryRow(countryKey);
+      if (!countryRow) countryRow = addCountryToCSV(countryKey, originalName);
+
+      // ✅ 核心逻辑：检查是否有精确模式的列值为0
+      let hasZeroInPreciseMode = false;
+      for (const col of selectedColumns) {
+        if (columnModes[col] === "precise") {
+          const val = Number(countryRow[col] || 0);
+          if (val === 0) {
+            hasZeroInPreciseMode = true;
+            break;
+          }
+        }
+      }
+
+      // 如果有精确模式的列值为0，直接显示白色
+      if (hasZeroInPreciseMode) {
+        path.style.fill = "#ffffff";
+        return;
+      }
+
+      // 否则，计算所有选中列的总和（模糊模式）
+      let total = 0;
+      selectedColumns.forEach(col => {
+        total += Number(countryRow[col] || 0);
+      });
+
+      const allValues = csvData.map(row => {
+        let sum = 0;
+        selectedColumns.forEach(col => sum += Number(row[col] || 0));
+        return sum;
+      });
+      const maxVal = Math.max(...allValues, 1);
+      const normalized = Math.min(Math.max(total / maxVal, 0), 1);
+
+      const r = 255;
+      const g = Math.floor(255 * (1 - normalized));
+      const b = Math.floor(255 * (1 - normalized));
+      path.style.fill = `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // 刷新所有国家颜色
+    function refreshMapColors() {
+      const paths = document.querySelectorAll("path");
+      paths.forEach(path => {
+        const cls = path.className?.baseVal || "";
+        const name = path.getAttribute("name") || "";
+        const originalName = cls.trim() || name.trim();
+        const countryKey = normalizeCountryName(originalName);
+        if (countryKey) updateCountryColor(path, countryKey, originalName);
+      });
+    }
+
+    // 布尔切换逻辑
+    function handleCountryClick(countryKey, originalName) {
+      if (!currentEditColumn.active) {
+        return;
+      }
+
+      let countryRow = getCountryRow(countryKey);
+      if (!countryRow) {
+        countryRow = addCountryToCSV(countryKey, originalName);
+      }
+
+      const countryPaths = getCountryPaths(countryKey);
+
+      if (currentEditColumn.type === "boolean") {
+        let currentValue = Number(countryRow[currentEditColumn.name] || 0);
+        const newValue = currentValue === 1 ? 0 : 1;
+        countryRow[currentEditColumn.name] = newValue;
+
+        const targetColor = newValue === 1 ? "#ff0000" : "#ffffff";
+        countryPaths.forEach(path => {
+          path.removeAttribute("fill");
+          path.style.fill = targetColor;
+        });
+        return;
+      }
+
+      if (currentEditColumn.type === "number") {
+        const modal = document.getElementById("number-input-modal");
+        const numberInput = document.getElementById("number-value");
+        numberInput.value = Number(countryRow[currentEditColumn.name] || 0);
+        modal.style.display = "flex";
+
+        document.getElementById("number-confirm").onclick = () => {
+          countryRow[currentEditColumn.name] = Number(numberInput.value);
+          modal.style.display = "none";
+          countryPaths.forEach(path => {
+            updateCountryColor(path, countryKey, originalName);
+          });
+        };
+        document.getElementById("number-cancel").onclick = () => {
+          modal.style.display = "none";
+        };
+      }
+    }
+
+    // 渲染搜索结果
+    function renderSearchResults(keyword) {
+      const searchResults = document.getElementById("search-results");
+      searchResults.innerHTML = "";
+      
+      const dataColumns = csvHeaders.filter(h => h !== "国家");
+      
+      if (!keyword || keyword.trim() === "") {
+        const unselectedColumns = dataColumns.filter(col => !selectedColumns.includes(col));
+        if (unselectedColumns.length === 0) {
+          searchResults.classList.remove("active");
+          return;
+        }
+        unselectedColumns.forEach(col => {
+          const item = document.createElement("div");
+          item.className = "search-result-item";
+          item.textContent = col;
+          item.addEventListener("click", () => selectColumn(col));
+          searchResults.appendChild(item);
+        });
+      } else {
+        const lowerKeyword = keyword.toLowerCase();
+        const matchedColumns = dataColumns.filter(col => 
+          col.toLowerCase().includes(lowerKeyword) && !selectedColumns.includes(col)
+        );
+        if (matchedColumns.length === 0) {
+          searchResults.classList.remove("active");
+          return;
+        }
+        matchedColumns.forEach(col => {
+          const item = document.createElement("div");
+          item.className = "search-result-item";
+          item.textContent = col;
+          item.addEventListener("click", () => selectColumn(col));
+          searchResults.appendChild(item);
+        });
+      }
+      
+      searchResults.classList.add("active");
+    }
+
+    // 选择列
+    function selectColumn(colName) {
+      if (!selectedColumns.includes(colName)) {
+        selectedColumns.push(colName);
+        // 默认设置为模糊模式
+        columnModes[colName] = "fuzzy";
+        renderSelectedColumns();
+        refreshMapColors();
+      }
+      document.getElementById("search-results").classList.remove("active");
+      document.getElementById("column-search").value = "";
+    }
+
+    // ✅ 切换列模式
+    function toggleColumnMode(colName) {
+      columnModes[colName] = columnModes[colName] === "fuzzy" ? "precise" : "fuzzy";
+      renderSelectedColumns();
+      refreshMapColors();
+    }
+
+    // ✅ 渲染选中的列标签（带模式切换按钮）
+    function renderSelectedColumns() {
+      const container = document.getElementById("selected-columns");
+      container.innerHTML = "";
+      
+      selectedColumns.forEach(col => {
+        const tag = document.createElement("div");
+        tag.className = "selected-column-tag";
+        
+        // 模式按钮
+        const modeBtn = document.createElement("button");
+        modeBtn.className = `mode-btn ${columnModes[col] === "precise" ? "precise" : ""}`;
+        modeBtn.textContent = columnModes[col] === "precise" ? "精确" : "模糊";
+        modeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleColumnMode(col);
+        });
+        
+        // 列名
+        const colNameSpan = document.createElement("span");
+        colNameSpan.textContent = col;
+        
+        // 关闭按钮
+        const closeBtn = document.createElement("span");
+        closeBtn.className = "tag-close";
+        closeBtn.textContent = "×";
+        closeBtn.dataset.col = col;
+        closeBtn.addEventListener("click", (e) => {
+          const colToRemove = e.target.dataset.col;
+          selectedColumns = selectedColumns.filter(c => c !== colToRemove);
+          delete columnModes[colToRemove];
+          renderSelectedColumns();
+          refreshMapColors();
+        });
+        
+        tag.appendChild(modeBtn);
+        tag.appendChild(colNameSpan);
+        tag.appendChild(closeBtn);
+        container.appendChild(tag);
+      });
+    }
+
+    // 绑定所有事件
+    function bindEvents() {
+      const searchInput = document.getElementById("column-search");
+      const searchResults = document.getElementById("search-results");
+
+      // 搜索框输入事件
+      searchInput.addEventListener("input", (e) => {
+        renderSearchResults(e.target.value);
+      });
+
+      // 搜索框聚焦事件
+      searchInput.addEventListener("focus", () => {
+        renderSearchResults(searchInput.value);
+      });
+
+      // 点击外部关闭搜索结果
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".search-group")) {
+          searchResults.classList.remove("active");
+        }
+      });
+
+      // 新增按钮
+      document.getElementById("add-btn").addEventListener("click", () => {
+        currentEditColumn = { name: "", type: "boolean", mode: "add", active: false };
+        document.getElementById("edit-status").classList.add("active");
+        document.getElementById("edit-mode-text").textContent = "新增列";
+        document.getElementById("edit-column-type").style.display = "block";
+        document.getElementById("edit-column-name").style.display = "block";
+        document.getElementById("edit-confirm-btn").style.display = "block";
+        document.getElementById("edit-column-name").value = "";
+        document.getElementById("cancel-btn").style.display = "block";
+      });
+
+      // 编辑状态下的「确定」按钮
+      document.getElementById("edit-confirm-btn").addEventListener("click", () => {
+        if (currentEditColumn.mode === "add") {
+          const colName = document.getElementById("edit-column-name").value.trim();
+          const colType = document.getElementById("edit-column-type").value;
+          
+          if (!colName) {
+            alert("请输入列名");
+            return;
+          }
+          
+          if (!csvHeaders.includes(colName)) {
+            csvHeaders.push(colName);
+            csvData.forEach(row => {
+              row[colName] = 0;
+            });
+          }
+          
+          currentEditColumn.name = colName;
+          currentEditColumn.type = colType;
+          currentEditColumn.active = true;
+          
+          document.getElementById("edit-confirm-btn").style.display = "none";
+          
+          refreshMapColors();
+          
+          alert(`✅ 已进入编辑模式\n列名：${colName}\n类型：${colType === "boolean" ? "布尔" : "数值"}\n\n现在可以点击地图赋值了！`);
+        }
+      });
+
+      // 取消按钮
+      document.getElementById("cancel-btn").addEventListener("click", () => {
+        currentEditColumn = { name: "", type: "", mode: "", active: false };
+        document.getElementById("edit-status").classList.remove("active");
+        document.getElementById("cancel-btn").style.display = "none";
+        document.getElementById("edit-confirm-btn").style.display = "block";
+        refreshMapColors();
+      });
+
+      // 确定保存按钮
+      document.getElementById("save-btn").addEventListener("click", () => {
+        if (confirm("确定保存修改？\n下载后请覆盖原有的 geo.csv 文件")) {
+          exportCSV();
+        }
+      });
+
+      // 数值弹窗取消
+      document.getElementById("number-cancel").addEventListener("click", () => {
+        document.getElementById("number-input-modal").style.display = "none";
+      });
+    }
+
+    // 导出CSV
+    function exportCSV() {
+      let csvContent = csvHeaders.join(",") + "\n";
+      csvData.forEach(row => {
+        const values = csvHeaders.map(header => row[header]);
+        csvContent += values.join(",") + "\n";
+      });
+
+      const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = "geo.csv";
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

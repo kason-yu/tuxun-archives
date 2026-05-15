@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国家影像查询</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f7;
+            --card-bg: #ffffff;
+            --primary: #007aff;
+            --fuzzy-color: #ff9500;
+            --exact-color: #34c759;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏样式 */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .home-link:hover {
+            background: #0056b3;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 4px;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 200;
+            max-height: 220px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        .suggestion-item:hover {
+            background-color: var(--bg-color);
+        }
+
+        .tag-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e9e9eb;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .tag-name { font-weight: bold; }
+
+        .mode-btn {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .mode-fuzzy { background-color: var(--fuzzy-color); color: white; }
+        .mode-exact { background-color: var(--exact-color); color: white; }
+
+        .remove-tag {
+            cursor: pointer;
+            font-weight: bold;
+            color: #888;
+            margin-left: 2px;
+        }
+
+        .remove-tag:hover { color: #000; }
+
+        /* 统计信息 */
+        .stats {
+            font-size: 13px;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 图片网格布局 */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .img-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: zoom-in;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .img-card:hover { transform: translateY(-2px); }
+
+        .img-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .img-info {
+            padding: 8px;
+            font-size: 12px;
+            color: #555;
+            word-break: break-all;
+            text-align: center;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            color: #999;
+            margin-top: 50px;
+            grid-column: 1 / -1;
+        }
+
+        /* 大图模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            text-decoration: none;
+        }
+
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #fff;
+            font-size: 50px;
+            cursor: pointer;
+            z-index: 1001;
+            user-select: none;
+            padding: 20px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .modal-nav:hover { opacity: 1; }
+        .modal-prev { left: 10px; }
+        .modal-next { right: 10px; }
+
+        .modal-caption {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #fff;
+            font-size: 14px;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部导航 -->
+    <div class="navbar">
+        <div class="nav-row">
+            <a href="../index.html" class="home-link">返回首页</a>
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="输入关键词筛选图片...">
+                <div id="suggestionsDropdown" class="suggestions-dropdown"></div>
+            </div>
+            <div class="stats" id="stats">共 0 张图片</div>
+        </div>
+        <div id="activeTags" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+
+    <!-- 图片展示区域 -->
+    <div id="gallery" class="gallery"></div>
+
+    <!-- 大图模态框 -->
+    <div id="imageModal" class="modal">
+        <span class="modal-close" id="modalClose">&times;</span>
+        <span class="modal-nav modal-prev" id="modalPrev">&#8249;</span>
+        <span class="modal-nav modal-next" id="modalNext">&#8250;</span>
+        <img class="modal-content" id="modalImg">
+        <div class="modal-caption" id="modalCaption"></div>
+    </div>
+
+    <script src="image_list.js"></script>
+
+    <script>
+        // 全局状态
+        let imageList = []; // { name, tags, path }
+        let filteredList = [];
+        let currentFilters = [];
+        let allTags = [];
+        let currentModalIndex = -1;
+
+        const gallery = document.getElementById('gallery');
+        const searchInput = document.getElementById('searchInput');
+        const activeTagsDiv = document.getElementById('activeTags');
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalCaption = document.getElementById('modalCaption');
+        const modalClose = document.getElementById('modalClose');
+        const modalPrev = document.getElementById('modalPrev');
+        const modalNext = document.getElementById('modalNext');
+        const suggestionsDropdown = document.getElementById('suggestionsDropdown');
+        const searchWrapper = document.querySelector('.search-wrapper');
+        const stats = document.getElementById('stats');
+
+        // 初始化图片列表
+        function init() {
+            const base = './';
+            worldImages.forEach(name => {
+                const nameWithoutExt = name.replace(/\.[^/.]+$/, '');
+                const tags = nameWithoutExt.split('_');
+                imageList.push({
+                    name: name,
+                    tags: tags,
+                    path: base + name
+                });
+            });
+
+            filteredList = [...imageList];
+            buildAllTags();
+            renderGallery();
+            updateStats();
+        }
+
+        function buildAllTags() {
+            const tagSet = new Set();
+            imageList.forEach(img => {
+                img.tags.forEach(tag => tagSet.add(tag));
+            });
+            allTags = Array.from(tagSet);
+        }
+
+        // 渲染网格
+        function renderGallery() {
+            gallery.innerHTML = '';
+
+            if (filteredList.length === 0) {
+                gallery.innerHTML = '<div class="empty-state">没有找到匹配的图片</div>';
+                return;
+            }
+
+            // 只显示前 500 张，避免渲染过多
+            const displayList = filteredList.slice(0, 500);
+            displayList.forEach((img, idx) => {
+                const card = document.createElement('div');
+                card.className = 'img-card';
+                card.innerHTML = `
+                    <img src="${img.path}" alt="${img.name}" loading="lazy">
+                    <div class="img-info" title="${img.name}">${img.name.replace(/\.[^/.]+$/, '')}</div>
+                `;
+                card.addEventListener('click', () => openModal(idx));
+                gallery.appendChild(card);
+            });
+
+            if (filteredList.length > 500) {
+                const hint = document.createElement('div');
+                hint.className = 'empty-state';
+                hint.textContent = `显示前 500 张，共 ${filteredList.length} 张，请使用关键词筛选`;
+                gallery.appendChild(hint);
+            }
+        }
+
+        // 标签管理
+        function addTag() {
+            const val = searchInput.value.trim();
+            if (!val) return;
+            if (!currentFilters.find(f => f.tag === val)) {
+                currentFilters.push({ tag: val, mode: 'fuzzy' });
+                applyFilters();
+                renderFilters();
+            }
+            searchInput.value = '';
+            suggestionsDropdown.style.display = 'none';
+        }
+
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addTag();
+        });
+
+        function toggleMode(index) {
+            currentFilters[index].mode = currentFilters[index].mode === 'fuzzy' ? 'exact' : 'fuzzy';
+            renderFilters();
+            applyFilters();
+        }
+
+        function removeTag(index) {
+            currentFilters.splice(index, 1);
+            renderFilters();
+            applyFilters();
+        }
+
+        function renderFilters() {
+            activeTagsDiv.innerHTML = '';
+            currentFilters.forEach((filter, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'tag-chip';
+                chip.innerHTML = `
+                    <span class="tag-name">${filter.tag}</span>
+                    <span class="mode-btn ${filter.mode === 'fuzzy' ? 'mode-fuzzy' : 'mode-exact'}" onclick="toggleMode(${index})">
+                        ${filter.mode === 'fuzzy' ? '模糊' : '精确'}
+                    </span>
+                    <span class="remove-tag" onclick="removeTag(${index})">&times;</span>
+                `;
+                activeTagsDiv.appendChild(chip);
+            });
+        }
+
+        // 应用筛选
+        function applyFilters() {
+            filteredList = imageList.filter(img => {
+                if (currentFilters.length === 0) return true;
+
+                // 先检查关键词搜索
+                const keyword = searchInput.value.trim().toLowerCase();
+                if (keyword && !img.name.toLowerCase().includes(keyword)) return false;
+
+                // 检查标签筛选
+                for (const filter of currentFilters) {
+                    const hasTag = img.tags.some(tag => {
+                        if (filter.mode === 'exact') return tag === filter.tag;
+                        return tag.toLowerCase().includes(filter.tag.toLowerCase());
+                    });
+                    if (!hasTag) return false;
+                }
+                return true;
+            });
+            renderGallery();
+            updateStats();
+        }
+
+        searchInput.addEventListener('input', function() {
+            const inputVal = this.value.trim().toLowerCase();
+            suggestionsDropdown.innerHTML = '';
+
+            if (!inputVal) {
+                suggestionsDropdown.style.display = 'none';
+                applyFilters();
+                return;
+            }
+
+            const matchedTags = allTags.filter(tag => tag.toLowerCase().includes(inputVal));
+            if (matchedTags.length === 0) {
+                suggestionsDropdown.style.display = 'none';
+                return;
+            }
+
+            matchedTags.forEach(tag => {
+                const item = document.createElement('div');
+                item.className = 'suggestion-item';
+                item.textContent = tag;
+                item.addEventListener('click', function() {
+                    searchInput.value = tag;
+                    addTag();
+                });
+                suggestionsDropdown.appendChild(item);
+            });
+
+            suggestionsDropdown.style.display = 'block';
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchWrapper.contains(e.target)) {
+                suggestionsDropdown.style.display = 'none';
+            }
+        });
+
+        suggestionsDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        function updateStats() {
+            stats.textContent = `共 ${filteredList.length} 张图片`;
+        }
+
+        // Lightbox
+        function openModal(index) {
+            currentModalIndex = index;
+            updateModal();
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            currentModalIndex = -1;
+        }
+
+        function updateModal() {
+            if (currentModalIndex < 0 || currentModalIndex >= filteredList.length) return;
+            const img = filteredList[currentModalIndex];
+            modalImg.src = img.path;
+            modalCaption.textContent = `${img.name.replace(/\.[^/.]+$/, '')} (${currentModalIndex + 1}/${filteredList.length})`;
+        }
+
+        function modalPrevImg() {
+            if (currentModalIndex > 0) {
+                currentModalIndex--;
+                updateModal();
+            }
+        }
+
+        function modalNextImg() {
+            if (currentModalIndex < filteredList.length - 1) {
+                currentModalIndex++;
+                updateModal();
+            }
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+        modalPrev.addEventListener('click', function(e) { e.stopPropagation(); modalPrevImg(); });
+        modalNext.addEventListener('click', function(e) { e.stopPropagation(); modalNextImg(); });
+
+        document.addEventListener('keydown', function(e) {
+            if (modal.style.display === 'flex') {
+                if (e.key === 'Escape') closeModal();
+                else if (e.key === 'ArrowLeft') modalPrevImg();
+                else if (e.key === 'ArrowRight') modalNextImg();
+            }
+        });
+
+        // 启动
+        init();
+    </script>
+</body>
+</html>

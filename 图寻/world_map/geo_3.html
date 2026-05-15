@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>国家筛选地图</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 导航栏样式 */
+    #navbar {
+      padding: 10px 20px;
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      min-height: 60px;
+    }
+
+    /* 搜索区域 */
+    .search-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #column-search {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 200px;
+    }
+
+    /* 搜索结果下拉框 */
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 5px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      min-width: 200px;
+    }
+
+    .search-results.active {
+      display: block;
+    }
+
+    .search-result-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .search-result-item:hover {
+      background: #f0f0f0;
+    }
+
+    /* 选中的列标签 */
+    .selected-columns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .selected-column-tag {
+      background: #e1f5fe;
+      color: #01579b;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-btn {
+      background: #fff;
+      border: 1px solid #01579b;
+      color: #01579b;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .mode-btn.precise {
+      background: #01579b;
+      color: #fff;
+    }
+
+    .tag-close {
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 12px;
+      margin-left: 4px;
+    }
+
+    .delete-col-btn {
+      cursor: pointer;
+      font-size: 10px;
+      color: #f44336;
+      border: 1px solid #f44336;
+      background: #fff;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 4px;
+    }
+
+    .delete-col-btn:hover {
+      background: #f44336;
+      color: #fff;
+    }
+
+    /* 功能按钮样式 */
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .func-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      background: #2196f3;
+      color: white;
+      cursor: pointer;
+    }
+
+    .func-btn:hover {
+      background: #1976d2;
+    }
+
+    .func-btn.save {
+      background: #4caf50;
+    }
+
+    .func-btn.save:hover {
+      background: #388e3c;
+    }
+
+    .func-btn.confirm {
+      background: #ff9800;
+    }
+
+    .func-btn.confirm:hover {
+      background: #f57c00;
+    }
+
+    .func-btn.sync {
+      background: #9e9e9e;
+    }
+
+    /* 编辑列状态栏 - 已废弃，改用模态框 */
+    /* #edit-col-status 相关样式已移除 */
+
+    /* 编辑状态区域 */
+    .edit-status {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 15px;
+      background: #fff3e0;
+      border-radius: 4px;
+    }
+
+    .edit-status.active {
+      display: flex;
+    }
+
+    .edit-status select, .edit-status input {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    /* 同步状态 */
+    #sync-status {
+      font-size: 12px;
+      color: #4caf50;
+      display: none;
+    }
+
+    #sync-status.active {
+      display: block;
+    }
+
+    /* 提示框 */
+    #tooltip {
+      position: absolute;
+      background: #333;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      pointer-events: none;
+      display: none;
+      z-index: 999;
+    }
+
+    /* 国家信息面板（新功能） */
+    #country-info-panel {
+      position: absolute;
+      top: 80px;
+      right: 20px;
+      width: 260px;
+      max-height: 70vh;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.15);
+      padding: 12px 15px;
+      z-index: 9999;
+      display: none;
+      overflow-y: auto;
+    }
+
+    #country-info-panel h4 {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #222;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 6px;
+    }
+
+    .country-column-item {
+      font-size: 13px;
+      padding: 4px 0;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .no-data {
+      font-size: 13px;
+      color: #999;
+      padding: 6px 0;
+    }
+
+    /* 地图容器 */
+    #svg-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      overflow: hidden;
+      width: 100%;
+      height: calc(100vh - 80px);
+      position: relative;
+    }
+
+    #svg-container svg {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <div id="navbar">
+    <!-- 搜索区域 -->
+    <div class="search-group">
+      <input type="text" id="column-search" placeholder="搜索列名...">
+      <div class="search-results" id="search-results"></div>
+    </div>
+
+    <!-- 选中的列标签 -->
+    <div class="selected-columns" id="selected-columns"></div>
+
+    <!-- 编辑状态区域 -->
+    <div class="edit-status" id="edit-status">
+      <span id="edit-mode-text">新增列</span>
+      <select id="edit-column-type">
+        <option value="boolean">布尔类型</option>
+        <option value="number">数值类型</option>
+      </select>
+      <input type="text" id="edit-column-name" placeholder="输入列名">
+      <button class="func-btn confirm" id="edit-confirm-btn">确定</button>
+    </div>
+
+    <!-- 编辑列状态提示栏 - 已废弃，改用 edit-mode-modal -->
+    <!-- <div id="edit-col-status"> ... </div> -->
+
+    <!-- 同步状态 -->
+    <span id="sync-status">已同步</span>
+
+    <!-- 功能按钮 -->
+    <div class="btn-group">
+      <button class="func-btn" id="add-btn">新增</button>
+      <button class="func-btn" id="cancel-btn" style="display:none;">取消</button>
+    </div>
+  </div>
+
+  <!-- 国家信息面板（新功能） -->
+  <div id="country-info-panel">
+    <h4 id="country-info-title">国家名称</h4>
+    <div id="country-info-columns"></div>
+  </div>
+
+  <!-- 数值输入弹窗 -->
+  <div class="modal" id="number-input-modal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:1000;">
+    <div class="modal-content" style="background:white;padding:20px;border-radius:8px;width:400px;display:flex;flex-direction:column;gap:15px;">
+      <div class="form-row" style="display:flex;flex-direction:column;gap:5px;">
+        <label>输入数值</label>
+        <input type="number" id="number-value" placeholder="输入数值" style="padding:8px;border:1px solid #ddd;border-radius:4px;">
+      </div>
+      <div class="modal-btns" style="display:flex;justify-content:flex-end;gap:10px;">
+        <button class="cancel-btn" id="number-cancel" style="background:#f44336;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;">取消</button>
+        <button class="confirm-btn" id="number-confirm" style="background:#4caf50;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑列弹窗（新增列确认后弹出，引导用户点击国家进行编辑） -->
+  <div class="modal" id="edit-mode-modal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);display:none;z-index:1000;pointer-events:none;">
+    <div class="modal-content" id="edit-mode-modal-content" style="position:absolute;top:100px;right:50px;background:white;padding:20px;border-radius:8px;width:450px;display:flex;flex-direction:column;gap:15px;pointer-events:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3);cursor:move;">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:move;" id="edit-modal-drag-handle">
+        <h3 style="margin:0;" id="edit-modal-title">编辑列</h3>
+        <span style="cursor:pointer;font-size:20px;color:#999;padding:5px;" id="edit-modal-close">&times;</span>
+      </div>
+      <p style="margin:0;color:#666;font-size:14px;line-height:1.6;" id="edit-modal-hint">类型：布尔（点击国家切换 0/1）<br>请点击地图上的国家（如误点请再次点击即可取消）</p>
+      <div style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;" id="edit-modal-status">
+        <!-- 动态显示最近编辑的国家 -->
+        <div style="color:#999;font-size:13px;">暂无编辑记录</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;">
+        <button class="cancel-btn" id="edit-modal-finish" style="background:#4caf50;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;">完成编辑</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="svg-container"></div>
+  <div id="tooltip"></div>
+
+  <script>
+    // ============ 配置 ============
+    const API_BASE = window.location.origin; // 自动适配当前域名（本地开发或 Vercel 部署）
+
+    // ============ 全局数据 ============
+    let csvData = [];
+    let csvHeaders = ["国家"];
+    let selectedColumns = [];
+    let columnModes = {};
+    let currentEditColumn = {
+      name: "",
+      type: "",
+      mode: "",
+      active: false
+    };
+    let infoPanelVisible = false;
+
+    // ============ 工具函数 ============
+    function normalizeCountryName(name) {
+      if (!name) return "";
+      return name.trim().toLowerCase();
+    }
+
+    function getCountryRow(countryKey) {
+      return csvData.find(row => normalizeCountryName(row["国家"]) === countryKey);
+    }
+
+    function addCountryToCSV(countryKey, originalName) {
+      if (!Array.isArray(csvHeaders)) {
+        console.error("addCountryToCSV: csvHeaders 不是数组");
+        csvHeaders = ["国家"];
+      }
+      const newRow = {};
+      csvHeaders.forEach(header => {
+        newRow[header] = header === "国家" ? originalName : 0;
+      });
+      csvData.push(newRow);
+      console.log("新增国家：", originalName);
+      return newRow;
+    }
+
+    function getCountryPaths(countryKey) {
+      return Array.from(document.querySelectorAll("path")).filter(path => {
+        const cls = path.className?.baseVal || "";
+        const name = path.getAttribute("name") || "";
+        return normalizeCountryName(cls) === countryKey || normalizeCountryName(name) === countryKey;
+      });
+    }
+
+    // ============ API 调用 ============
+    async function apiFetch(url, options = {}) {
+      try {
+        const res = await fetch(url, {
+          headers: { 'Content-Type': 'application/json' },
+          ...options
+        });
+        const data = await res.json();
+        if (!res.ok) return { error: data.error || '请求失败' };
+        return data;
+      } catch (e) {
+        console.error('API 请求失败:', e);
+        return null;
+      }
+    }
+
+    // 加载所有国家数据
+    async function loadCountries() {
+      const result = await apiFetch(`${API_BASE}/api/countries`);
+      if (result && Array.isArray(result)) {
+        csvData = result;
+        console.log("加载了", csvData.length, "个国家数据");
+      } else if (result && !Array.isArray(result)) {
+        console.error("countries API 返回了非数组数据:", result);
+      }
+    }
+
+    // 加载列头
+    async function loadHeaders() {
+      const result = await apiFetch(`${API_BASE}/api/headers`);
+      if (result && Array.isArray(result)) {
+        csvHeaders = result;
+        console.log("加载了列头：", csvHeaders);
+      } else if (result && !Array.isArray(result)) {
+        console.error("headers API 返回了非数组数据:", result);
+      }
+    }
+
+    // 加载选中的列和模式
+    async function loadSelectedColumns() {
+      const result = await apiFetch(`${API_BASE}/api/selected-columns`);
+      if (result && Array.isArray(result)) {
+        if (!Array.isArray(csvHeaders)) { csvHeaders = ["国家"]; }
+
+        // 🔒 保障3：加载时严格过滤 + 警告日志
+        const invalidCols = result.filter(c => !csvHeaders.includes(c));
+        if (invalidCols.length > 0) {
+          console.warn(`⚠️ 加载到无效列名（已自动过滤）: ${invalidCols.join(', ')}`);
+          console.warn('这可能是之前新增列失败留下的脏数据，系统已自动清理');
+        }
+
+        selectedColumns = result.filter(c => csvHeaders.includes(c));
+
+        // 同时加载模式
+        const modesResult = await apiFetch(`${API_BASE}/api/selected-modes`);
+        if (modesResult) {
+          columnModes = modesResult;
+          // 清理无效列的模式
+          invalidCols.forEach(col => delete columnModes[col]);
+        }
+        console.log("恢复了选中的列：", selectedColumns);
+        renderSelectedColumns();
+        refreshMapColors();
+      }
+    }
+
+    // 防抖保存：避免快速连续选择列时产生请求竞态
+    let savePending = false;
+    let saveTimer = null;
+    async function saveSelectedColumns() {
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(async () => {
+        saveTimer = null;
+        if (!savePending) {
+          savePending = true;
+
+          // 🔒 保障1：保存前严格验证所有选中的列都在 csvHeaders 中
+          if (!Array.isArray(csvHeaders)) { csvHeaders = ["国家"]; }
+          if (!Array.isArray(selectedColumns)) { selectedColumns = []; }
+
+          const invalidCols = selectedColumns.filter(col => !csvHeaders.includes(col));
+          if (invalidCols.length > 0) {
+            console.error(`⚠️ 发现无效列名将被自动移除: ${invalidCols.join(', ')}`);
+            selectedColumns = selectedColumns.filter(col => csvHeaders.includes(col));
+            invalidCols.forEach(col => delete columnModes[col]);
+          }
+
+          await apiFetch(`${API_BASE}/api/selected-columns`, {
+            method: 'PUT',
+            body: JSON.stringify({ columns: selectedColumns, modes: columnModes })
+          });
+          savePending = false;
+        }
+      }, 300);
+    }
+
+    // 更新某个国家的某个列值
+    async function updateCountryValue(countryName, column, value) {
+      await apiFetch(`${API_BASE}/api/countries/${encodeURIComponent(countryName)}/${encodeURIComponent(column)}`, {
+        method: 'PUT',
+        body: JSON.stringify({ value })
+      });
+    }
+
+    // 新增列
+    async function addColumn(name, type) {
+      const result = await apiFetch(`${API_BASE}/api/headers`, {
+        method: 'POST',
+        body: JSON.stringify({ name, type })
+      });
+      return result;
+    }
+
+    // 删除列
+    async function deleteColumn(name) {
+      const result = await apiFetch(`${API_BASE}/api/headers/${encodeURIComponent(name)}`, {
+        method: 'DELETE'
+      });
+      return result;
+    }
+
+    // 新增国家
+    async function addCountryToDB(countryName, data = {}) {
+      await apiFetch(`${API_BASE}/api/countries`, {
+        method: 'POST',
+        body: JSON.stringify({ country: countryName, data })
+      });
+    }
+
+    // 显示同步状态
+    function showSyncStatus() {
+      const el = document.getElementById('sync-status');
+      el.classList.add('active');
+      setTimeout(() => el.classList.remove('active'), 2000);
+    }
+
+    // ============ 地图颜色逻辑 ============
+    function updateCountryColor(path, countryKey, originalName) {
+      if (!Array.isArray(csvData) || !Array.isArray(csvHeaders)) return;
+
+      if (currentEditColumn.active && currentEditColumn.name) {
+        let countryRow = getCountryRow(countryKey);
+        if (!countryRow) return;
+        const val = Number(countryRow[currentEditColumn.name] || 0);
+        if (currentEditColumn.type === "boolean") {
+          path.style.fill = val === 1 ? "#ff0000" : "#ffffff";
+        } else {
+          const allValues = csvData.map(r => Number(r[currentEditColumn.name] || 0));
+          const max = Math.max(...allValues, 1);
+          const n = Math.min(Math.max(val / max, 0), 1);
+          path.style.fill = `rgb(255, ${Math.floor(255*(1-n))}, ${Math.floor(255*(1-n))})`;
+        }
+        return;
+      }
+
+      if (selectedColumns.length === 0) {
+        path.style.fill = "#fff";
+        return;
+      }
+
+      let countryRow = getCountryRow(countryKey);
+      if (!countryRow) countryRow = addCountryToCSV(countryKey, originalName);
+
+      // 精确模式判断
+      for (const col of selectedColumns) {
+        if (columnModes[col] === "precise" && Number(countryRow[col] || 0) === 0) {
+          path.style.fill = "#fff";
+          return;
+        }
+      }
+
+      // 总和上色
+      let total = 0;
+      selectedColumns.forEach(col => total += Number(countryRow[col] || 0));
+      const allSum = csvData.map(r => {
+        let s = 0; selectedColumns.forEach(c => s += Number(r[c] || 0)); return s;
+      });
+      const maxSum = Math.max(...allSum, 1);
+      const norm = Math.min(Math.max(total / maxSum, 0), 1);
+      path.style.fill = `rgb(255, ${Math.floor(255*(1-norm))}, ${Math.floor(255*(1-norm))})`;
+    }
+
+    function refreshMapColors() {
+      // 防崩溃：确保 csvData 是数组
+      if (!Array.isArray(csvData)) {
+        console.error("csvData 不是数组，跳过着色");
+        return;
+      }
+      document.querySelectorAll("path").forEach(path => {
+        const n = path.className?.baseVal || path.getAttribute("name") || "";
+        const key = normalizeCountryName(n);
+        if (key) updateCountryColor(path, key, n);
+      });
+    }
+
+    // ============ 初始化 ============
+    async function init() {
+      // 加载 SVG
+      try {
+        const svgCode = await fetch("world.svg").then(res => res.text());
+        document.getElementById("svg-container").innerHTML = svgCode;
+      } catch (err) {
+        console.error("SVG 加载失败：", err);
+        alert("SVG文件加载失败，请检查文件路径");
+        return;
+      }
+
+      // 加载数据、列头（必须先于选中的列，因为需要 csvHeaders）
+      await Promise.all([
+        loadCountries(),
+        loadHeaders()
+      ]);
+      // 选中的列依赖 csvHeaders，必须串行加载
+      await loadSelectedColumns();
+
+      initMap();
+      bindEvents();
+      console.log("初始化完成，地图加载成功");
+      console.log("可用列：", csvHeaders.filter(h => h !== "国家"));
+    }
+
+    // ============ 地图初始化 ============
+    function initMap() {
+      const tooltip = document.getElementById("tooltip");
+      const paths = document.querySelectorAll("path");
+
+      paths.forEach(path => {
+        const cls = path.className?.baseVal || "";
+        const name = path.getAttribute("name") || "";
+        const originalName = cls.trim() || name.trim();
+        const countryKey = normalizeCountryName(originalName);
+        if (!countryKey) return;
+
+        updateCountryColor(path, countryKey, originalName);
+
+        path.addEventListener("mouseenter", () => {
+          tooltip.innerText = originalName;
+          tooltip.style.display = "block";
+        });
+        path.addEventListener("mousemove", (e) => {
+          tooltip.style.left = e.pageX + 10 + "px";
+          tooltip.style.top = e.pageY + 10 + "px";
+        });
+        path.addEventListener("mouseleave", () => {
+          tooltip.style.display = "none";
+        });
+
+        path.addEventListener("click", (e) => {
+          e.stopPropagation();
+          handleCountryClick(countryKey, originalName);
+        });
+      });
+    }
+
+    // ============ 国家点击处理 ============
+    function handleCountryClick(countryKey, originalName) {
+      console.log("点击国家：", originalName);
+
+      if (currentEditColumn.active) {
+        executeEditMode(countryKey, originalName);
+        return;
+      }
+
+      showCountryInfoPanel(countryKey, originalName);
+    }
+
+    // ============ 显示国家面板 ============
+    function showCountryInfoPanel(countryKey, countryName) {
+      const panel = document.getElementById("country-info-panel");
+      const title = document.getElementById("country-info-title");
+      const list = document.getElementById("country-info-columns");
+
+      if (!Array.isArray(csvData) || !Array.isArray(csvHeaders)) return;
+
+      let row = getCountryRow(countryKey);
+      if (!row) row = addCountryToCSV(countryKey, countryName);
+
+      const validCols = csvHeaders.filter(h => h !== "国家" && Number(row[h] || 0) !== 0);
+      console.log("该国家非0列：", validCols);
+
+      title.textContent = countryName;
+      list.innerHTML = "";
+
+      if (validCols.length === 0) {
+        list.innerHTML = "<div class=\"no-data\">该国家无激活数据</div>";
+      } else {
+        validCols.forEach(col => {
+          const div = document.createElement("div");
+          div.className = "country-column-item";
+          div.textContent = col;
+          list.appendChild(div);
+        });
+      }
+
+      panel.style.display = "block";
+      infoPanelVisible = true;
+    }
+
+    function hideCountryInfoPanel() {
+      document.getElementById("country-info-panel").style.display = "none";
+      infoPanelVisible = false;
+    }
+
+    // ============ 编辑模式 ============
+    async function executeEditMode(countryKey, originalName) {
+      if (!Array.isArray(csvData) || !Array.isArray(csvHeaders) || !currentEditColumn.name) return;
+
+      let countryRow = getCountryRow(countryKey);
+      if (!countryRow) countryRow = addCountryToCSV(countryKey, originalName);
+      if (!countryRow) return;
+      const paths = getCountryPaths(countryKey);
+
+      // 🔒 优化：只在第一次点击时添加到selectedColumns（避免重复）
+      if (!selectedColumns.includes(currentEditColumn.name)) {
+        selectedColumns.push(currentEditColumn.name);
+        columnModes[currentEditColumn.name] = "fuzzy";
+        // 不立即renderSelectedColumns和save，等退出编辑模式时统一保存
+      }
+
+      if (currentEditColumn.type === "boolean") {
+        const v = Number(countryRow[currentEditColumn.name] || 0);
+        countryRow[currentEditColumn.name] = v ? 0 : 1;
+        const newVal = countryRow[currentEditColumn.name];
+        paths.forEach(p => p.style.fill = newVal ? "#ff0000" : "#fff");
+
+        await updateCountryValue(originalName, currentEditColumn.name, newVal);
+        showSyncStatus();
+        refreshMapColors();
+
+        // 在模态框中显示编辑反馈
+        updateEditModalFeedback(originalName, newVal);
+      }
+
+      if (currentEditColumn.type === "number") {
+        const modal = document.getElementById("number-input-modal");
+        const input = document.getElementById("number-value");
+        input.value = Number(countryRow[currentEditColumn.name] || 0);
+        modal.style.display = "flex";
+
+        // 🔒 修复：使用一次性事件绑定，避免多次绑定
+        const confirmBtn = document.getElementById("number-confirm");
+        const newConfirmHandler = async () => {
+          countryRow[currentEditColumn.name] = Number(input.value);
+          modal.style.display = "none";
+
+          await updateCountryValue(originalName, currentEditColumn.name, countryRow[currentEditColumn.name]);
+          showSyncStatus();
+          refreshMapColors();
+
+          // 在模态框中显示编辑反馈
+          updateEditModalFeedback(originalName, countryRow[currentEditColumn.name]);
+
+          // 移除监听器，避免内存泄漏
+          confirmBtn.removeEventListener('click', newConfirmHandler);
+        };
+
+        confirmBtn.onclick = newConfirmHandler;
+        document.getElementById("number-cancel").onclick = () => modal.style.display = "none";
+      }
+    }
+
+    // 更新编辑模态框中的反馈状态
+    function updateEditModalFeedback(countryName, value) {
+      const statusDiv = document.getElementById("edit-modal-status");
+      if (!statusDiv) return;
+      const firstChild = statusDiv.children[0];
+      if (firstChild && firstChild.textContent === "暂无编辑记录") {
+        statusDiv.innerHTML = "";
+      }
+      const item = document.createElement("div");
+      item.style.cssText = "display:flex;justify-content:space-between;padding:6px 8px;background:#f5f5f5;border-radius:4px;font-size:14px;";
+      item.innerHTML = `<span>${countryName}</span><span style="font-weight:bold;color:#4caf50;">= ${value}</span>`;
+      statusDiv.prepend(item);
+    }
+
+    // ============ 搜索 ============
+    function renderSearchResults(keyword) {
+      const res = document.getElementById("search-results");
+      if (!res) return;
+      res.innerHTML = "";
+
+      // 防崩溃：确保 csvHeaders 是数组
+      if (!Array.isArray(csvHeaders)) {
+        console.error("csvHeaders 不是数组，搜索不可用");
+        res.classList.remove("active");
+        return;
+      }
+      if (!Array.isArray(selectedColumns)) {
+        selectedColumns = [];
+      }
+
+      const cols = csvHeaders.filter(h => h !== "国家" && !selectedColumns.includes(h));
+      const kw = (keyword || "").toLowerCase();
+      const match = kw ? cols.filter(c => c.toLowerCase().includes(kw)) : cols;
+      if (match.length === 0) { res.classList.remove("active"); return; }
+      match.forEach(c => {
+        const d = document.createElement("div");
+        d.className = "search-result-item";
+        d.textContent = c;
+        d.onclick = () => selectColumn(c);
+        res.appendChild(d);
+      });
+      res.classList.add("active");
+    }
+
+    // ============ 选择列 ============
+    async function selectColumn(col) {
+      if (!Array.isArray(selectedColumns)) { selectedColumns = []; }
+      if (!selectedColumns.includes(col)) {
+        selectedColumns.push(col);
+        columnModes[col] = "fuzzy";
+        renderSelectedColumns();
+        refreshMapColors();
+        await saveSelectedColumns();
+      }
+      document.getElementById("search-results").classList.remove("active");
+      document.getElementById("column-search").value = "";
+    }
+
+    async function toggleMode(col) {
+      columnModes[col] = columnModes[col] === "fuzzy" ? "precise" : "fuzzy";
+      renderSelectedColumns();
+      refreshMapColors();
+      await saveSelectedColumns();
+    }
+
+    function renderSelectedColumns() {
+      const box = document.getElementById("selected-columns");
+      if (!box) return;
+      box.innerHTML = "";
+      if (!Array.isArray(selectedColumns)) { selectedColumns = []; }
+      selectedColumns.forEach(col => {
+        const t = document.createElement("div");
+        t.className = "selected-column-tag";
+
+        const btn = document.createElement("button");
+        btn.className = `mode-btn ${columnModes[col] === "precise" ? "precise" : ""}`;
+        btn.textContent = columnModes[col] === "precise" ? "精确" : "模糊";
+        btn.onclick = e => { e.stopPropagation(); toggleMode(col); };
+
+        const n = document.createElement("span");
+        n.textContent = col;
+
+        const x = document.createElement("span");
+        x.className = "tag-close";
+        x.textContent = "\u00d7";
+        x.onclick = () => {
+          selectedColumns = selectedColumns.filter(c => c !== col);
+          delete columnModes[col];
+          renderSelectedColumns();
+          refreshMapColors();
+        };
+
+        const del = document.createElement("span");
+        del.className = "delete-col-btn";
+        del.textContent = "删除列";
+        del.onclick = async () => {
+          if (!confirm(`确定删除列"${col}"？该操作将删除该列所有数据且不可撤销。`)) return;
+          const result = await deleteColumn(col);
+          if (result && result.error) {
+            alert("删除失败: " + result.error);
+          } else {
+            selectedColumns = selectedColumns.filter(c => c !== col);
+            delete columnModes[col];
+            // 从本地数据中也移除
+            csvHeaders = csvHeaders.filter(h => h !== col);
+            csvData.forEach(r => delete r[col]);
+            renderSelectedColumns();
+            refreshMapColors();
+            showSyncStatus();
+            alert(`列"${col}"已删除`);
+          }
+        };
+
+        t.append(btn, n, x, del);
+        box.appendChild(t);
+      });
+    }
+
+    // ============ 事件绑定 ============
+    function bindEvents() {
+      console.log("🔧 [DEBUG] bindEvents 开始执行...");
+      
+      const s = document.getElementById("column-search");
+      if (!s) { console.error("❌ 找不到搜索框元素"); }
+      
+      s.oninput = e => renderSearchResults(e.target.value);
+      s.onfocus = () => renderSearchResults(s.value);
+
+      // 🔒 关键修复：阻止输入框的 Enter 键触发页面刷新（提前到这里）
+      const nameInput = document.getElementById("edit-column-name");
+      if (nameInput) {
+        nameInput.addEventListener("keydown", (e) => {
+          console.log("📍 [DEBUG] 输入框 keydown:", e.key, e.keyCode);
+          if (e.key === "Enter") {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("✅ [DEBUG] 成功拦截 Enter 键！");
+            return false;
+          }
+        });
+        console.log("✅ [DEBUG] Enter键拦截器已安装");
+      } else {
+        console.error("❌ 找不到输入框元素");
+      }
+
+      const confirmBtn = document.getElementById("edit-confirm-btn");
+      if (!confirmBtn) { console.error("❌ 找不到确定按钮"); }
+      
+      // 新增按钮
+      const addBtn = document.getElementById("add-btn");
+      if (!addBtn) { console.error("❌ 找不到新增按钮"); }
+      
+      addBtn.onclick = (e) => {
+        console.log("📍 [DEBUG] 点击了新增按钮");
+        e.stopPropagation();
+        currentEditColumn = { name: "", type: "boolean", mode: "add", active: false };
+        document.getElementById("edit-status").classList.add("active");
+        document.getElementById("cancel-btn").style.display = "block";
+        hideCountryInfoPanel();
+        console.log("✅ [DEBUG] 新增模式已启动");
+      };
+
+      // 确认新增列 - 使用 addEventListener 替代 onclick（更可靠）
+      confirmBtn.addEventListener("click", async (e) => {
+        console.log("🎯 [CRITICAL] 确定按钮被点击了！！！");  // 这条必须出现
+        
+        try {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();  // 🔒 阻止所有其他监听器
+          
+          console.log("📍 [DEBUG] 阻止了默认行为和冒泡");
+          
+          const name = document.getElementById("edit-column-name").value.trim();
+          const type = document.getElementById("edit-column-type").value;
+          console.log(`📍 [DEBUG] 获取到列名: "${name}", 类型: ${type}`);
+          
+          if (!name) { 
+            alert("输入列名"); 
+            console.log("⚠️ 列名为空，退出");
+            return; 
+          }
+
+          console.log(`🔧 [DEBUG] 开始创建新列：${name}（类型：${type}）`);
+
+          const result = await addColumn(name, type);
+          console.log("📍 [DEBUG] addColumn API 返回:", result);
+          
+          if (!result || result.error) {
+            alert("列已存在或创建失败: " + (result?.error || "未知错误"));
+            console.error("❌ 创建列失败：", result?.error);
+            return;
+          }
+
+          console.log("✅ [DEBUG] 列创建成功，正在刷新数据...");
+
+          await loadHeaders();
+          console.log("📍 [DEBUG] loadHeaders 完成");
+          
+          await loadCountries();
+          console.log("📍 [DEBUG] loadCountries 完成");
+
+          console.log("✅ [DEBUG] 准备进入编辑模式");
+
+          currentEditColumn = { name, type, mode: "add", active: true };
+          console.log("📍 [DEBUG] currentEditColumn 已设置");
+
+          document.getElementById("edit-status").classList.remove("active");
+          document.getElementById("cancel-btn").style.display = "none";
+
+          const modal = document.getElementById("edit-mode-modal");
+          document.getElementById("edit-modal-title").textContent = `编辑列：${name}`;
+          document.getElementById("edit-modal-hint").textContent =
+            `类型：${type === "boolean" ? "布尔（点击国家切换 0/1）" : "数值（点击国家弹出输入框）"}，请点击地图上的国家`;
+          document.getElementById("edit-modal-status").innerHTML =
+            '<div style="color:#999;font-size:13px;">暂无编辑记录</div>';
+          modal.style.display = "flex";
+          
+          console.log("🎉 [SUCCESS] 模态框应该弹出了！display =", modal.style.display);
+          
+          console.log("📍 [DEBUG] 即将调用 refreshMapColors()...");
+          refreshMapColors();
+          console.log("✅ [DEBUG] refreshMapColors() 执行完成");
+          
+          console.log("📍 [DEBUG] 即将调用 showSyncStatus()...");
+          showSyncStatus();
+          console.log("✅ [DEBUG] showSyncStatus() 执行完成");
+
+          console.log("✅ [DEBUG] 编辑模式启动完成！");
+        } catch (err) {
+          console.error("❌ [ERROR] 出错了:", err);
+          alert("新增列失败: " + err.message);
+        }
+      }, true);  // true = useCapture，确保最先执行
+      
+      console.log("✅ [DEBUG] 确定按钮事件监听器已安装（useCapture模式）");
+
+      // 点击其他区域关闭面板
+      document.addEventListener("click", (e) => {
+        const isProtected = e.target.closest(".search-group") ||
+            e.target.closest("#country-info-panel") ||
+            e.target.closest(".func-btn") ||
+            e.target.closest("#number-input-modal") ||
+            e.target.closest("#edit-mode-modal") ||
+            e.target.closest("#edit-status");
+            
+        if (isProtected) {
+          return;
+        }
+        
+        console.log("📍 [DEBUG] document click 触发, target:", e.target.tagName, e.target.id, e.target.className);
+        
+        if (infoPanelVisible) {
+          console.log("📍 [DEBUG] → 关闭国家信息面板");
+          hideCountryInfoPanel();
+        }
+        if (!e.target.closest(".search-group")) {
+          const searchResults = document.getElementById("search-results");
+          searchResults?.classList.remove("active");
+        }
+      });
+
+      // 退出编辑模式（关闭模态框）
+      function exitEditMode() {
+        console.log("⚠️ [DEBUG] exitEditMode 被调用！");
+        
+        const colName = currentEditColumn.name;
+
+        if (colName && selectedColumns.includes(colName)) {
+          renderSelectedColumns();
+          saveSelectedColumns();
+          console.log(`✅ 退出编辑模式，已保存列：${colName}`);
+        }
+
+        currentEditColumn = { name: "", type: "", mode: "", active: false };
+        document.getElementById("edit-mode-modal").style.display = "none";
+        document.getElementById("edit-status").classList.remove("active");
+        document.getElementById("cancel-btn").style.display = "none";
+        refreshMapColors();
+        hideCountryInfoPanel();
+      }
+
+      // 取消新增列
+      document.getElementById("cancel-btn").onclick = (e) => {
+        e.stopPropagation();
+        exitEditMode();
+      };
+
+      // 退出编辑 - 模态框按钮
+      document.getElementById("edit-modal-finish").onclick = (e) => {
+        e.stopPropagation();
+        exitEditMode();
+      };
+      document.getElementById("edit-modal-close").onclick = (e) => {
+        e.stopPropagation();
+        exitEditMode();
+      };
+
+      document.getElementById("number-cancel").onclick = () => {
+        document.getElementById("number-input-modal").style.display = "none";
+      };
+
+      // 🎯 新增：编辑模态框拖拽功能
+      const modalContent = document.getElementById("edit-mode-modal-content");
+      const dragHandle = document.getElementById("edit-modal-drag-handle");
+      
+      if (modalContent && dragHandle) {
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+
+        dragHandle.addEventListener("mousedown", (e) => {
+          if (e.target.id === "edit-modal-close") return; // 不拦截关闭按钮的点击
+          
+          isDragging = true;
+          initialX = e.clientX - xOffset;
+          initialY = e.clientY - yOffset;
+          
+          console.log("🖱️ [DRAG] 开始拖拽");
+          
+          // 防止文本选择
+          e.preventDefault();
+        });
+
+        document.addEventListener("mousemove", (e) => {
+          if (!isDragging) return;
+          
+          e.preventDefault();
+          
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+          
+          xOffset = currentX;
+          yOffset = currentY;
+          
+          modalContent.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+        });
+
+        document.addEventListener("mouseup", (e) => {
+          if (!isDragging) return;
+          
+          isDragging = false;
+          console.log("✅ [DRAG] 结束拖拽，位置:", { x: xOffset, y: yOffset });
+        });
+        
+        console.log("✅ [DEBUG] 编辑模态框拖拽功能已安装");
+      } else {
+        console.error("❌ 找不到编辑模态框或拖拽手柄");
+      }
+      
+      console.log("✅ [DEBUG] bindEvents 执行完成");
+    }
+
+    // ============ 启动 ============
+    init();
+
+    // 🔒 全局保护：阻止页面意外刷新
+    window.addEventListener("beforeunload", (e) => {
+      console.log("⚠️ [CRITICAL] 检测到页面即将刷新！正在尝试阻止...");
+      console.trace("调用栈:");
+      
+      // 真正阻止刷新！
+      e.preventDefault();
+      e.returnValue = "";  // 兼容旧浏览器
+      
+      return "";  // 必须返回字符串才能触发确认对话框
+    });
+  </script>
+</body>
+</html>

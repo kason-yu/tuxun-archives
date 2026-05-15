@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-Cn">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>使用西里尔字母の语言</title>
+        <style>
+            body {
+                background-image: url('图寻学院0.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+                font-family: Arial, sans-serif;
+            }
+            .container {
+                background-color: rgba(255, 255, 255, 0.8);
+                max-width: 80%;
+                margin: 40px auto;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .text-line {
+                padding: 10px 0;
+                border-bottom: 1px solid #ddd;
+            }
+            .clickable {
+                cursor: pointer;
+                color: #0066cc;
+                padding: 10px 0;
+                border-bottom: 1px solid #ddd;
+                user-select: none;
+            }
+            .clickable:hover {
+                color: #003366;
+                background-color: rgba(0, 102, 204, 0.1);
+            }
+            .hidden-content {
+                display: none;
+                padding: 15px;
+                margin: 10px 0;
+                background-color: rgba(240, 240, 240, 0.9);
+                border-radius: 5px;
+                border-left: 3px solid #0066cc;
+            }
+            .hidden-content.show {
+                display: block;
+            }
+            .arrow {
+                display: inline-block;
+                margin-right: 8px;
+                transition: transform 0.3s;
+            }
+            .arrow.rotated {
+                transform: rotate(90deg);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>语言</h1>
+            
+            <h2>特殊字母</h2>
+            
+            <h3>辅音</h3>
+            <table border="1" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tr style="background-color: #f2f2f2;">
+                    <th>字母</th>
+                    <th>语言</th>
+                </tr>
+                
+                <tr>
+                    <td>Çç</td>
+                    <td>阿尔巴尼亚语、法语、土耳其语、葡萄牙语、加泰罗尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Ćć</td>
+                    <td>波兰语、克罗地亚语、波斯尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Đđ</td>
+                    <td>克罗地亚语、波斯尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Ðð</td>
+                    <td>冰岛语</td>
+                </tr>
+                <tr>
+                    <td>Ďď</td>
+                    <td>捷克语、斯洛伐克语</td>
+                </tr>
+                <tr>
+                    <td>Dždž</td>
+                    <td>斯洛伐克语、波斯尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Dddd</td>
+                    <td>威尔士语</td>
+                </tr>
+                <tr>
+                    <td>Ģģ</td>
+                    <td>拉脱维亚语</td>
+                </tr>
+                <tr>
+                    <td>Ğğ</td>
+                    <td>土耳其语、阿塞拜疆语</td>
+                </tr>
+                <tr>
+                    <td>Ķķ</td>
+                    <td>拉脱维亚语</td>
+                </tr>
+                <tr>
+                    <td>Ļļ</td>
+                    <td>拉脱维亚语</td>
+                </tr>
+                <tr>
+                    <td>Ĺĺ</td>
+                    <td>斯洛伐克语</td>
+                </tr>
+                <tr>
+                    <td>Ľľ</td>
+                    <td>斯洛伐克语</td>
+                </tr>
+                <tr>
+                    <td>Łł</td>
+                    <td>波兰语（特有）</td>
+                </tr>
+                <tr>
+                    <td>Llll</td>
+                    <td>威尔士语</td>
+                </tr>
+                <tr>
+                    <td>Ņņ</td>
+                    <td>拉脱维亚语</td>
+                </tr>
+                <tr>
+                    <td>Ńń</td>
+                    <td>波兰语（特有）</td>
+                </tr>
+                <tr>
+                    <td>Ñň</td>
+                    <td>捷克语、斯洛伐克语</td>
+                </tr>
+                <tr>
+                    <td>Ññ</td>
+                    <td>西班牙语</td>
+                </tr>
+                <tr>
+                    <td>Ngng</td>
+                    <td>威尔士语</td>
+                </tr>
+                <tr>
+                    <td>Phph</td>
+                    <td>威尔士语</td>
+                </tr>
+                <tr>
+                    <td>Řř</td>
+                    <td>捷克语、斯洛伐克语</td>
+                </tr>
+                <tr>
+                    <td>Rhrh</td>
+                    <td>威尔士语</td>
+                </tr>
+                <tr>
+                    <td>Šš</td>
+                    <td>爱沙尼亚语、克罗地亚语、拉脱维亚语、立陶宛语、斯洛文尼亚语、捷克语、斯洛伐克语、波斯尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Şş</td>
+                    <td>土耳其语、阿塞拜疆语</td>
+                </tr>
+                <tr>
+                    <td>Șș</td>
+                    <td>罗马尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Șș</td>
+                    <td>波兰语、黑山语</td>
+                </tr>
+                <tr>
+                    <td>Țț</td>
+                    <td>罗马尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Ťť</td>
+                    <td>捷克语、斯洛伐克语</td>
+                </tr>
+                <tr>
+                    <td>Thth</td>
+                    <td>威尔士语</td>
+                </tr>
+                <tr>
+                    <td>ẞß</td>
+                    <td>德语</td>
+                </tr>
+                <tr>
+                    <td>Þþ</td>
+                    <td>冰岛语</td>
+                </tr>
+                <tr>
+                    <td>Ýý</td>
+                    <td>冰岛语、捷克语、斯洛伐克语</td>
+                </tr>
+                <tr>
+                    <td>Ÿÿ</td>
+                    <td>法语</td>
+                </tr>
+                <tr>
+                    <td>Žž</td>
+                    <td>爱沙尼亚语、克罗地亚语、立陶宛语、斯洛文尼亚语、捷克语、斯洛伐克语、波斯尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Źź</td>
+                    <td>波兰语、黑山语</td>
+                </tr>
+                <tr>
+                    <td>Żż</td>
+                    <td>波兰语</td>
+                </tr>
+            </table>
+            
+            <h3>元音</h3>
+            <table border="1" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tr style="background-color: #f2f2f2;">
+                    <th>字母</th>
+                    <th>语言</th>
+                </tr>
+                <tr>
+                    <td>无Ии</td>
+                    <td>白俄罗斯</td>
+                </tr>
+                <tr>
+                    <td>Іі</td>
+                    <td>乌克兰语、白俄罗斯语、哈萨克语</td>
+                </tr>
+                <tr>
+                    <td>Її</td>
+                    <td>乌克兰语</td>
+                </tr>
+                <tr>
+                    <td>Єє</td>
+                    <td>乌克兰语</td>
+                </tr>
+                <tr>
+                    <td>Ââ</td>
+                    <td>法语、罗马尼亚语、葡萄牙语、威尔士语</td>
+                </tr>
+                <tr>
+                    <td>Ãã</td>
+                    <td>葡萄牙语</td>
+                </tr>
+                <tr>
+                    <td>Åå</td>
+                    <td>丹麦语、瑞典语</td>
+                </tr>
+                <tr>
+                    <td>Ąą</td>
+                    <td>波兰语、立陶宛语</td>
+                </tr>
+                <tr>
+                    <td>Àà</td>
+                    <td>法语、葡萄牙语、意大利语、加泰罗尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Ēē</td>
+                    <td>拉脱维亚语</td>
+                </tr>
+                <tr>
+                    <td>Ęę</td>
+                    <td>立陶宛语</td>
+                </tr>
+                <tr>
+                    <td>Ėė</td>
+                    <td>立陶宛语</td>
+                </tr>
+                <tr>
+                    <td>Éé</td>
+                    <td>爱尔兰语、冰岛语、法语、荷兰语、捷克语、卢森堡语、斯洛伐克语、葡萄牙语、西班牙语、意大利语、加泰罗尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Êê</td>
+                    <td>法语、葡萄牙语、威尔士语</td>
+                </tr>
+                <tr>
+                    <td>Ěě</td>
+                    <td>捷克语</td>
+                </tr>
+                <tr>
+                    <td>Èè</td>
+                    <td>法语、荷兰语、意大利语、加泰罗尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Ëë</td>
+                    <td>阿尔巴尼亚语、法语、荷兰语、卢森堡语</td>
+                </tr>
+                <tr>
+                    <td>Īī</td>
+                    <td>拉脱维亚语</td>
+                </tr>
+                <tr>
+                    <td>Įį</td>
+                    <td>立陶宛语</td>
+                </tr>
+                <tr>
+                    <td>Iı</td>
+                    <td>土耳其语、阿塞拜疆语</td>
+                </tr>
+                <tr>
+                    <td>Îî</td>
+                    <td>罗马尼亚语、威尔士语</td>
+                </tr>
+                <tr>
+                    <td>Íí</td>
+                    <td>爱尔兰语、冰岛语、捷克语、斯洛伐克语、西班牙语、加泰罗尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Ìì</td>
+                    <td>意大利语</td>
+                </tr>
+                <tr>
+                    <td>Ïï</td>
+                    <td>法语</td>
+                </tr>
+                <tr>
+                    <td>Yy</td>
+                    <td>威尔士语（元音）</td>
+                </tr>
+                <tr>
+                    <td>Öö</td>
+                    <td>爱沙尼亚语、冰岛语、德语、芬兰语、瑞典语、土耳其语、阿塞拜疆语</td>
+                </tr>
+                <tr>
+                    <td>Õõ</td>
+                    <td>爱沙尼亚语、葡萄牙语</td>
+                </tr>
+                <tr>
+                    <td>Óó</td>
+                    <td>爱尔兰语、波兰语、冰岛语、捷克语、斯洛伐克语、葡萄牙语、西班牙语、加泰罗尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Òò</td>
+                    <td>意大利语、加泰罗尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Ôô</td>
+                    <td>法语、斯洛伐克语、葡萄牙语、威尔士语</td>
+                </tr>
+                <tr>
+                    <td>Ūū</td>
+                    <td>立陶宛语、拉脱维亚语</td>
+                </tr>
+                <tr>
+                    <td>Üü</td>
+                    <td>爱沙尼亚语、德语、法语、土耳其语、巴西葡萄牙语、西班牙语、加泰罗尼亚语、阿塞拜疆语</td>
+                </tr>
+                <tr>
+                    <td>Ůů</td>
+                    <td>捷克语</td>
+                </tr>
+                <tr>
+                    <td>Úú</td>
+                    <td>爱尔兰语、冰岛语、捷克语、斯洛伐克语、葡萄牙语、西班牙语、加泰罗尼亚语</td>
+                </tr>
+                <tr>
+                    <td>Ųų</td>
+                    <td>立陶宛语</td>
+                </tr>
+                <tr>
+                    <td>Ûû</td>
+                    <td>法语、威尔士语</td>
+                </tr>
+                <tr>
+                    <td>Ùù</td>
+                    <td>法语、意大利语</td>
+                </tr>
+                <tr>
+                    <td>Ww</td>
+                    <td>威尔士语（元音）</td>
+                </tr>
+                <tr>
+                    <td>Ææ</td>
+                    <td>丹麦语、冰岛语</td>
+                </tr>
+                <tr>
+                    <td>Əə</td>
+                    <td>阿塞拜疆语</td>
+                </tr>
+                <tr>
+                    <td>Øø</td>
+                    <td>丹麦语</td>
+                </tr>
+                <tr>
+                    <td>Œœ</td>
+                    <td>法语</td>
+                </tr>
+            </table>
+            <h1>语言介绍</h1>
+            <div class="text-line">波兰语：拉丁字母和特殊字符Ąą、Ćć、Ńń（波兰独有的字母）、Śś、Óó、Źź、Żż、Łł（波兰语特殊字母），波兰语的辅音系统相当复杂，有很多的辅音群。波兰语中基本不使用字母V。相反，它经常使用字母W，这在斯拉夫语系中是独一份。其他特别常见的辅音有Z、K和C。特征组合：-owa</div>
+            
+            <div class="clickable" onclick="toggleContent('content1', this)">
+                <span class="arrow">▶</span>波兰语例句（点击展开）
+            </div>
+            <div id="content1" class="hidden-content">
+                <p>Z gimnazjum we Wschodniej Dzielnicy. Haruhi Suzumiya. Nie interesują mnie zwykli ludzie. Jeśli są tu jacyś kosmici, podróżnicy w czasie albo esperzy - zapraszam! To wszystko.</p>
+            </div>
+            
+            <div class="text-line">德语：拉丁字母和特殊字母Ää、Öö、Üü、ẞß</div>
+            
+            <div class="clickable" onclick="toggleContent('content2', this)">
+                <span class="arrow">▶</span>德语例句（点击展开）
+            </div>
+            <div id="content2" class="hidden-content">
+                <p>Ich bin Suzumiya Haruhi.Ich habe kein Interesse an normalen Menschen.Natürlich kannst du kommen und nach mir suchen,wenn du Alien,Zukünftiger Mensch, Mensch Aus Andere Universen oder Superkräfter Mensch bist.Das ist alles!</p>
+            </div>
+
+            <div class="text-line">法语：拉丁字母和特殊字符Àà、Ââ、Çç、Éé、Œœ、Èè、Êê、Ëë、Îî、Ïï、Ôô、Ûû、Ùù、Üü、Ÿÿ。冠词：du、de、le／la／les、de l'、des。特征组合：不考虑英语，ique，95%为法语，葡萄牙语2%，西班牙语1%</div>
+            
+            <div class="clickable" onclick="toggleContent('content3', this)">
+                <span class="arrow">▶</span>法语例句（点击展开）
+            </div>
+            <div id="content3" class="hidden-content">
+                <p>Je suis Haruhi Suzumiya, de l'école intermédiaire Higashi. Je ne m'intéresse pas aux humains ordinaires. S'il y a les extraterrestres, les voyageurs du temps, les humains des mondes autres, les espers et cetera, venez à moi s'il vous plaît. C'est tout!</p>
+            </div>
+            <div class="text-line">西班牙语：拉丁字母和特殊字符Áá、Éé、Íí、Ññ、Óó、Úú、Üü，介词：a、de、en，定冠词el、la、los、las，特征组合-ción(cion)，99%概率。</div>
+            
+            <div class="clickable" onclick="toggleContent('content4', this)">
+                <span class="arrow">▶</span>西班牙语例句（点击展开）
+            </div>
+            <div id="content4" class="hidden-content">
+                <p>Me llamo Haruhi Suzumiya, apoyo en el colegio Higashi. No me interesado a los seres humanos normales. Si dentro de vosotros hay alguien que es de extraterrestre, viajero del tiempo, persona de otro mundo o tienes fuerza de internaturales, búsca me. En fin.</p>
+            </div>
+            
+            <div class="text-line">匈牙利语：特征组合egy-</div>
+            
+            <div class="clickable" onclick="toggleContent('content5', this)">
+                <span class="arrow">▶</span>匈牙利语例句（点击展开）
+            </div>
+            <div id="content5" class="hidden-content">
+                <p>A Keleti Általános Iskolából. Suzumiya Haruhi. A hétköznapi emberek nem érdekelnek. Ha vannak itt földönkívüliek, időutazók, dimenzióváltók vagy esperek. Gyertek és csatlakozzatok hozzám. Ez minden.</p>
+            </div>
+            
+            <div class="text-line">意大利语：</div>
+            
+            <div class="clickable" onclick="toggleContent('content6', this)">
+                <span class="arrow">▶</span>意大利语例句（点击展开）
+            </div>
+            <div id="content6" class="hidden-content">
+                <p>Mi chiamo Haruhi Suzumiya e vengo dalla scuola media Higashi. Non nutro il minimo interesse verso i comuni esseri umani. Se in questa scuola ci sono alieni, viaggiatori del tempo, creature di altre dimensioni, esper io li prego di farsi avanti e di venire da me. È tutto.</p>
+            </div>
+            
+            <div class="text-line">英语：</div>
+            
+            <div class="clickable" onclick="toggleContent('content7', this)">
+                <span class="arrow">▶</span>英语例句（点击展开）
+            </div>
+            <div id="content7" class="hidden-content">
+                <p>I'm Suzumiya Haruhi from the East Junior High School, and I'm not interested in ordinary humans. If there were an alien, a time traveller or a superhero among you, please come to meet me! That's all.</p>
+            </div>
+        </div>
+        
+        <script>
+            function toggleContent(contentId, element) {
+                const content = document.getElementById(contentId);
+                const arrow = element.querySelector('.arrow');
+                
+                if (content.classList.contains('show')) {
+                    content.classList.remove('show');
+                    arrow.classList.remove('rotated');
+                } else {
+                    content.classList.add('show');
+                    arrow.classList.add('rotated');
+                }
+            }
+        </script>
+    </body>
+</html>
