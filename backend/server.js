@@ -209,6 +209,12 @@ app.delete('/api/countries/:country', async (req, res) => {
   res.json({ success: true });
 });
 
+// 全局错误处理
+app.use((err, req, res, next) => {
+  console.error('服务器错误:', err);
+  res.status(500).json({ error: err.message || '服务器内部错误' });
+});
+
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Geo Map API server running on port ${PORT}`);

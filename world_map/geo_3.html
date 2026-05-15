@@ -410,15 +410,16 @@
     async function apiFetch(url, options = {}) {
       try {
         const res = await fetch(url, {
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json; charset=utf-8' },
           ...options
         });
         const data = await res.json();
-        if (!res.ok) return { error: data.error || '请求失败' };
+        if (!res.ok) return { error: data.error || data.message || '请求失败' };
         return data;
       } catch (e) {
-        console.error('API 请求失败:', e);
-        return null;
+        console.error('API 请求失败:', e.message || e);
+        console.error('请求 URL:', url);
+        return { error: e.message || '网络错误' };
       }
     }
 
