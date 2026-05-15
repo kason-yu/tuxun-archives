@@ -6,7 +6,7 @@
       "use": "@vercel/node"
     },
     {
-      "src": "{assets,backend,world_map,world_img,world_number}/**",
+      "src": "{assets,world_map,world_img,world_number}/**",
       "use": "@vercel/static"
     },
     {
