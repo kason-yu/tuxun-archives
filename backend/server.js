@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const https = require('https');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,42 +10,34 @@ app.use(express.json({ limit: '10mb' }));
 const SUPABASE_URL = 'https://adqgeizddbitaovmhui.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcWdlaXpkYmRpdGFhb3ZtaHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MjkyNDQsImV4cCI6MjA5NDQwNTI0NH0.sOOAEuAfO-Fy3sD_3FZCVm4Oqb8TIYkMnFEbJAvYcTA';
 
-function supabaseRequest(path, method, body) {
-  return new Promise((resolve, reject) => {
-    const url = new URL(`${SUPABASE_URL}/rest/v1/${path}`);
-    
-    const postData = body ? JSON.stringify(body) : null;
-    const options = {
-      hostname: url.hostname,
-      port: 443,
-      path: url.pathname + url.search,
-      method: method || 'GET',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'authorization': `Bearer ${SUPABASE_KEY}`,
-        'content-type': 'application/json',
-        'prefer': 'return=representation'
-      }
-    };
-
-    if (postData) {
-      options.headers['content-length'] = Buffer.byteLength(postData);
+async function supabaseRequest(path, method, body) {
+  const url = `${SUPABASE_URL}/rest/v1/${path}`;
+  const options = {
+    method: method || 'GET',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'authorization': `Bearer ${SUPABASE_KEY}`,
+      'content-type': 'application/json'
     }
+  };
 
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try { resolve(JSON.parse(data)); }
-        catch (e) { resolve(data); }
-      });
-    });
+  if (body && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+    options.body = JSON.stringify(body);
+  }
 
-    req.on('error', reject);
-
-    if (postData) req.write(postData);
-    req.end();
-  });
+  try {
+    const response = await fetch(url, options);
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Supabase request error:', { url, error: error.message });
+    throw error;
+  }
 }
 
 app.get('/api/headers', async (req, res) => {
