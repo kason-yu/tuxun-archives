@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -199,6 +201,59 @@ app.delete('/api/countries/:country', async (req, res) => {
     await supabaseRequest(`countries?name=eq.${encodeURIComponent(decodeURIComponent(req.params.country))}`, 'DELETE');
     res.json({ success: true });
   } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// 初始化数据库（从 data.json 导入数据）
+app.post('/api/init', async (req, res) => {
+  try {
+    const dataPath = path.join(__dirname, 'data.json');
+    if (!fs.existsSync(dataPath)) return res.status(404).json({ error: 'data.json 不存在' });
+
+    const rawData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+    
+    // 检查是否已有数据
+    const existingCountries = await supabaseRequest('countries?select=name&limit=1');
+    if (existingCountries && existingCountries.length > 0) {
+      return res.json({ message: '数据库已有数据，跳过初始化', count: existingCountries.length });
+    }
+
+    // 导入 headers
+    const headers = rawData.headers || [];
+    for (let i = 0; i < headers.length; i++) {
+      await supabaseRequest('headers', 'POST', { name: headers[i] });
+    }
+
+    // 导入 countries
+    const countriesData = rawData.data || {};
+    let count = 0;
+    for (const [key, value] of Object.entries(countriesData)) {
+      if (value && typeof value === 'object' && value['国家']) {
+        const countryName = value['国家'];
+        const countryData = {};
+        for (const h of headers) {
+          if (h !== '国家') {
+            countryData[h] = Number(value[h]) || 0;
+          }
+        }
+        await supabaseRequest('countries', 'POST', { name: countryName, data: countryData });
+        count++;
+      }
+    }
+
+    // 初始化 settings
+    await supabaseRequest('settings', 'POST', { key: 'selected_columns', value: [] });
+    await supabaseRequest('settings', 'POST', { key: 'selected_modes', value: {} });
+
+    res.json({ 
+      success: true, 
+      message: `初始化完成：${headers.length} 列头，${count} 个国家`,
+      headersCount: headers.length,
+      countriesCount: count
+    });
+  } catch (e) {
+    console.error('初始化错误:', e);
     res.status(500).json({ error: e.message });
   }
 });
