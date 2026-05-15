@@ -27,13 +27,19 @@ async function supabaseRequest(path, method, body) {
 
   try {
     const response = await fetch(url, options);
-    const data = await response.json();
     
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+      const text = await response.text();
+      throw new Error(`HTTP ${response.status}: ${text}`);
     }
     
-    return data;
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      return data;
+    }
+    
+    return null;
   } catch (error) {
     console.error('Supabase request error:', { url, error: error.message });
     throw error;
