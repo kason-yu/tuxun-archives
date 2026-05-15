@@ -2,18 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "图寻/backend/server.js",
+      "src": "backend/server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/",
-      "dest": "/图寻/world_map/geo_3.html"
+      "dest": "/world_map/geo_3.html"
     },
     {
       "src": "/api/(.*)",
-      "dest": "/图寻/backend/server.js"
+      "dest": "/backend/server.js"
     },
     {
       "src": "/(.*)",

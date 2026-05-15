@@ -1,2 +1,0 @@
-# This file ensures the data.db directory is tracked by git
-# The actual data.db should be added to .gitignore
