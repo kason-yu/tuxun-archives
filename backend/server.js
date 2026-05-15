@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-const SUPABASE_URL = 'https://adqgeizddbitaovmhui.supabase.co';
+const SUPABASE_URL = 'https://adqgeizdbditaaovmhui.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcWdlaXpkYmRpdGFhb3ZtaHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MjkyNDQsImV4cCI6MjA5NDQwNTI0NH0.sOOAEuAfO-Fy3sD_3FZCVm4Oqb8TIYkMnFEbJAvYcTA';
 
 async function supabaseRequest(path, method, body) {
