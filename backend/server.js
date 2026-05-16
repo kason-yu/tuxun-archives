@@ -67,15 +67,9 @@ app.post('/api/headers', async (req, res) => {
 
     await supabaseRequest('headers', 'POST', [{ name }]);
 
-    const countries = await supabaseRequest('countries?select=name,data');
-    if (countries) {
-      for (const country of countries) {
-        const newData = { ...country.data, [name]: 0 };
-        await supabaseRequest(`countries?name=eq.${encodeURIComponent(country.name)}`, 'PATCH', { data: newData });
-      }
-    }
     res.json({ success: true, name });
   } catch (e) {
+    console.error('新增列错误:', e);
     res.status(500).json({ error: e.message });
   }
 });
@@ -87,16 +81,26 @@ app.delete('/api/headers/:name', async (req, res) => {
 
     await supabaseRequest(`headers?name=eq.${encodeURIComponent(name)}`, 'DELETE');
 
-    const countries = await supabaseRequest('countries?select=name,data');
-    if (countries) {
-      for (const country of countries) {
-        const newData = { ...country.data };
-        delete newData[name];
-        await supabaseRequest(`countries?name=eq.${encodeURIComponent(country.name)}`, 'PATCH', { data: newData });
+    try {
+      const selCols = await supabaseRequest("settings?key=eq.selected_columns&select=value");
+      if (selCols && selCols[0]) {
+        const cols = (selCols[0].value || []).filter(c => c !== name);
+        await supabaseRequest("settings?key=eq.selected_columns", 'PATCH', { value: cols });
       }
+      
+      const selModes = await supabaseRequest("settings?key=eq.selected_modes&select=value");
+      if (selModes && selModes[0]) {
+        const modes = { ...(selModes[0].value || {}) };
+        delete modes[name];
+        await supabaseRequest("settings?key=eq.selected_modes", 'PATCH', { value: modes });
+      }
+    } catch (settingsError) {
+      console.log('清理选中列提示:', settingsError.message);
     }
+
     res.json({ success: true });
   } catch (e) {
+    console.error('删除列错误:', e);
     res.status(500).json({ error: e.message });
   }
 });
