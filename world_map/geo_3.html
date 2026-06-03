@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>国家筛选地图 - 智能交集筛选</title>
+  <title>国家筛选地图 - 交集变红</title>
   <style>
     * {
       margin: 0;
@@ -34,7 +34,6 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-    /* 搜索区域 */
     .search-group {
       position: relative;
       display: flex;
@@ -59,11 +58,6 @@
       box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
     }
 
-    #column-search::placeholder {
-      color: #95d5b2;
-    }
-
-    /* 搜索结果下拉 */
     .search-results {
       position: absolute;
       top: 100%;
@@ -97,7 +91,6 @@
       color: #1b4d3e;
     }
 
-    /* 选中的标签区域 */
     .selected-columns {
       display: flex;
       gap: 10px;
@@ -116,7 +109,6 @@
       align-items: center;
       gap: 8px;
       border: 1px solid #d8f3dc;
-      transition: all 0.2s;
     }
 
     .mode-btn {
@@ -127,13 +119,11 @@
       border-radius: 30px;
       font-size: 11px;
       cursor: pointer;
-      transition: all 0.15s;
     }
 
     .mode-btn.precise {
       background: #2d6a4f;
       color: white;
-      border-color: #2d6a4f;
     }
 
     .tag-close {
@@ -142,7 +132,6 @@
       font-size: 14px;
       margin-left: 4px;
       color: #95d5b2;
-      transition: color 0.15s;
     }
 
     .tag-close:hover {
@@ -157,8 +146,6 @@
       background: transparent;
       padding: 2px 8px;
       border-radius: 30px;
-      margin-left: 4px;
-      transition: all 0.15s;
     }
 
     .delete-col-btn:hover {
@@ -166,7 +153,6 @@
       color: white;
     }
 
-    /* 统计信息 */
     .stats-info {
       background: #f0fdf4;
       padding: 6px 14px;
@@ -181,7 +167,6 @@
       font-weight: bold;
     }
 
-    /* 开关样式 */
     .toggle-switch {
       display: flex;
       align-items: center;
@@ -202,7 +187,6 @@
       border-radius: 20px;
       position: relative;
       cursor: pointer;
-      transition: all 0.2s;
     }
 
     .toggle-switch input:checked {
@@ -225,7 +209,6 @@
       transform: translateX(16px);
     }
 
-    /* 功能按钮 */
     .btn-group {
       display: flex;
       gap: 10px;
@@ -239,23 +222,12 @@
       color: white;
       cursor: pointer;
       font-weight: 500;
-      transition: all 0.15s;
     }
 
     .func-btn:hover {
       background: #1b4d3e;
-      transform: translateY(-1px);
     }
 
-    .func-btn.save {
-      background: #52b788;
-    }
-
-    .func-btn.save:hover {
-      background: #40916c;
-    }
-
-    /* 编辑状态 */
     .edit-status {
       display: none;
       align-items: center;
@@ -288,7 +260,6 @@
       display: inline-block;
     }
 
-    /* 提示框 */
     #tooltip {
       position: absolute;
       background: white;
@@ -303,7 +274,6 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    /* 国家信息面板 */
     #country-info-panel {
       position: absolute;
       top: 90px;
@@ -335,7 +305,6 @@
       border-bottom: 1px dashed #d8f3dc;
     }
 
-    /* 地图容器 */
     #svg-container {
       flex: 1;
       display: flex;
@@ -357,7 +326,6 @@
       box-shadow: 0 2px 12px rgba(0,0,0,0.05);
     }
 
-    /* 模态框 */
     .modal {
       position: fixed;
       top: 0;
@@ -436,7 +404,6 @@
   <div id="svg-container"></div>
   <div id="tooltip"></div>
 
-  <!-- 数值输入弹窗 -->
   <div class="modal" id="number-input-modal">
     <div class="modal-content">
       <h3 style="margin-bottom:16px;">📝 输入数值</h3>
@@ -448,7 +415,6 @@
     </div>
   </div>
 
-  <!-- 编辑列弹窗 -->
   <div class="modal" id="edit-mode-modal">
     <div class="modal-content" style="width:500px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
@@ -494,6 +460,7 @@
       return newRow;
     }
 
+    // ============ 核心：交集判断（精确模式必须全部满足） ============
     function doesCountryMatch(row) {
       if (selectedColumns.length === 0) return true;
       
@@ -502,18 +469,12 @@
         const value = Number(row[col] || 0);
         
         if (mode === "precise") {
+          // 精确模式：必须满足该列 > 0
           if (value <= 0) return false;
         }
+        // 模糊模式：不参与强制过滤
       }
       return true;
-    }
-
-    function getCountryScore(row) {
-      let total = 0;
-      selectedColumns.forEach(col => {
-        total += Number(row[col] || 0);
-      });
-      return total;
     }
 
     function updateMatchCache() {
@@ -530,6 +491,7 @@
       document.getElementById("total-count").innerText = csvData.length;
     }
 
+    // ============ 地图颜色逻辑（交集变红，否则白） ============
     function updateCountryColor(path, countryKey, originalName) {
       let countryRow = getCountryRow(countryKey);
       if (!countryRow) {
@@ -539,40 +501,38 @@
 
       const matches = currentMatchCache.get(countryKey) ?? doesCountryMatch(countryRow);
       
+      // 仅显示匹配模式：不匹配则隐藏
       if (filterOnlyMatch && !matches) {
         path.style.display = "none";
         return;
       }
       path.style.display = "";
 
+      // 编辑模式着色
       if (currentEditColumn.active && currentEditColumn.name) {
         const val = Number(countryRow[currentEditColumn.name] || 0);
         if (currentEditColumn.type === "boolean") {
-          path.style.fill = val === 1 ? "#e63946" : "#d8f3dc";
+          path.style.fill = val === 1 ? "#e63946" : "#ffffff";
         } else {
-          const allValues = csvData.map(r => Number(r[currentEditColumn.name] || 0));
-          const max = Math.max(...allValues, 1);
-          const intensity = Math.min(val / max, 1);
-          path.style.fill = `rgb(45, ${Math.floor(106 + (167 * (1-intensity)))}, ${Math.floor(79)})`;
+          path.style.fill = val > 0 ? "#e63946" : "#ffffff";
         }
         return;
       }
 
-      if (selectedColumns.length === 0 || !matches) {
-        path.style.fill = "#d8f3dc";
+      // 正常筛选模式
+      if (selectedColumns.length === 0) {
+        // 什么都没选：白色
+        path.style.fill = "#ffffff";
         return;
       }
-
-      const total = getCountryScore(countryRow);
-      const allScores = csvData.filter(r => currentMatchCache.get(normalizeCountryName(r["国家"]))).map(r => getCountryScore(r));
-      const maxScore = Math.max(...allScores, 1);
-      const intensity = Math.min(total / maxScore, 1);
       
-      // 清新渐变：浅绿 → 深绿
-      const r = 45 + Math.floor(150 * (1 - intensity));
-      const g = 106 + Math.floor(94 * (1 - intensity));
-      const b = 79;
-      path.style.fill = `rgb(${Math.min(r, 195)}, ${Math.min(g, 200)}, ${b})`;
+      if (matches) {
+        // 符合所有精确模式条件 → 红色
+        path.style.fill = "#e63946";
+      } else {
+        // 不符合 → 白色
+        path.style.fill = "#ffffff";
+      }
     }
 
     function refreshMapColors() {
@@ -591,6 +551,7 @@
       refreshMapColors();
     }
 
+    // ============ API 调用 ============
     async function apiFetch(url, options = {}) {
       try {
         const res = await fetch(url, {
@@ -671,6 +632,7 @@
       setTimeout(() => el.classList.remove('active'), 2000);
     }
 
+    // ============ UI 渲染 ============
     function renderSelectedColumns() {
       const box = document.getElementById("selected-columns");
       if (!box) return;
