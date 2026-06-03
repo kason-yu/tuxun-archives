@@ -17,20 +17,21 @@
       display: flex;
       flex-direction: column;
       font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
     }
 
-    /* 导航栏 - 现代风格 */
+    /* 导航栏 - 清新风格 */
     #navbar {
       padding: 12px 24px;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
       display: flex;
       align-items: center;
       gap: 16px;
       flex-wrap: wrap;
       flex-shrink: 0;
       min-height: 70px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
     /* 搜索区域 */
@@ -43,23 +44,23 @@
 
     #column-search {
       padding: 8px 14px;
-      border: 1px solid #334155;
-      border-radius: 10px;
+      border: 1px solid #d8f3dc;
+      border-radius: 40px;
       width: 220px;
-      background: #1e293b;
-      color: #f1f5f9;
+      background: #f8fafc;
+      color: #2d6a4f;
       font-size: 14px;
       transition: all 0.2s;
     }
 
     #column-search:focus {
       outline: none;
-      border-color: #38bdf8;
-      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+      border-color: #2d6a4f;
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
     }
 
     #column-search::placeholder {
-      color: #64748b;
+      color: #95d5b2;
     }
 
     /* 搜索结果下拉 */
@@ -68,10 +69,10 @@
       top: 100%;
       left: 0;
       margin-top: 8px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      background: white;
+      border: 1px solid #d8f3dc;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       max-height: 280px;
       overflow-y: auto;
       z-index: 1000;
@@ -87,13 +88,13 @@
       padding: 10px 14px;
       cursor: pointer;
       font-size: 14px;
-      color: #cbd5e1;
+      color: #2b5a47;
       transition: all 0.15s;
     }
 
     .search-result-item:hover {
-      background: #334155;
-      color: #38bdf8;
+      background: #d8f3dc;
+      color: #1b4d3e;
     }
 
     /* 选中的标签区域 */
@@ -106,32 +107,33 @@
     }
 
     .selected-column-tag {
-      background: linear-gradient(135deg, #1e3a5f, #0f2a4a);
-      color: #38bdf8;
+      background: #f0fdf4;
+      color: #2d6a4f;
       padding: 6px 12px;
-      border-radius: 20px;
+      border-radius: 40px;
       font-size: 13px;
       display: flex;
       align-items: center;
       gap: 8px;
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      border: 1px solid #d8f3dc;
       transition: all 0.2s;
     }
 
     .mode-btn {
       background: transparent;
-      border: 1px solid #38bdf8;
-      color: #38bdf8;
+      border: 1px solid #52b788;
+      color: #2d6a4f;
       padding: 3px 10px;
-      border-radius: 14px;
+      border-radius: 30px;
       font-size: 11px;
       cursor: pointer;
       transition: all 0.15s;
     }
 
     .mode-btn.precise {
-      background: #38bdf8;
-      color: #0f172a;
+      background: #2d6a4f;
+      color: white;
+      border-color: #2d6a4f;
     }
 
     .tag-close {
@@ -139,43 +141,43 @@
       font-weight: bold;
       font-size: 14px;
       margin-left: 4px;
-      color: #94a3b8;
+      color: #95d5b2;
       transition: color 0.15s;
     }
 
     .tag-close:hover {
-      color: #f87171;
+      color: #e63946;
     }
 
     .delete-col-btn {
       cursor: pointer;
       font-size: 11px;
-      color: #f87171;
-      border: 1px solid #f87171;
+      color: #e63946;
+      border: 1px solid #e63946;
       background: transparent;
       padding: 2px 8px;
-      border-radius: 12px;
+      border-radius: 30px;
       margin-left: 4px;
       transition: all 0.15s;
     }
 
     .delete-col-btn:hover {
-      background: #f87171;
-      color: #fff;
+      background: #e63946;
+      color: white;
     }
 
     /* 统计信息 */
     .stats-info {
-      background: #1e293b;
+      background: #f0fdf4;
       padding: 6px 14px;
-      border-radius: 20px;
+      border-radius: 40px;
       font-size: 13px;
-      color: #94a3b8;
+      color: #2d6a4f;
       font-family: monospace;
     }
 
     .stats-info span {
-      color: #38bdf8;
+      color: #e63946;
       font-weight: bold;
     }
 
@@ -184,19 +186,19 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #1e293b;
+      background: #f0fdf4;
       padding: 5px 12px;
-      border-radius: 30px;
+      border-radius: 40px;
       cursor: pointer;
       font-size: 13px;
-      color: #cbd5e1;
+      color: #2d6a4f;
     }
 
     .toggle-switch input {
       width: 36px;
       height: 20px;
       appearance: none;
-      background: #334155;
+      background: #d8f3dc;
       border-radius: 20px;
       position: relative;
       cursor: pointer;
@@ -204,7 +206,7 @@
     }
 
     .toggle-switch input:checked {
-      background: #38bdf8;
+      background: #2d6a4f;
     }
 
     .toggle-switch input::before {
@@ -232,8 +234,8 @@
     .func-btn {
       padding: 7px 16px;
       border: none;
-      border-radius: 10px;
-      background: #3b82f6;
+      border-radius: 40px;
+      background: #2d6a4f;
       color: white;
       cursor: pointer;
       font-weight: 500;
@@ -241,16 +243,16 @@
     }
 
     .func-btn:hover {
-      background: #2563eb;
+      background: #1b4d3e;
       transform: translateY(-1px);
     }
 
     .func-btn.save {
-      background: #10b981;
+      background: #52b788;
     }
 
     .func-btn.save:hover {
-      background: #059669;
+      background: #40916c;
     }
 
     /* 编辑状态 */
@@ -259,7 +261,7 @@
       align-items: center;
       gap: 12px;
       padding: 6px 16px;
-      background: #1e293b;
+      background: #fef3c7;
       border-radius: 40px;
       border: 1px solid #f59e0b;
     }
@@ -270,15 +272,15 @@
 
     .edit-status select, .edit-status input {
       padding: 6px 12px;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      background: #0f172a;
-      color: #f1f5f9;
+      border: 1px solid #d8f3dc;
+      border-radius: 30px;
+      background: white;
+      color: #2d6a4f;
     }
 
     #sync-status {
       font-size: 12px;
-      color: #10b981;
+      color: #52b788;
       display: none;
     }
 
@@ -289,16 +291,16 @@
     /* 提示框 */
     #tooltip {
       position: absolute;
-      background: #1e293b;
-      color: #f1f5f9;
+      background: white;
+      color: #2d6a4f;
       padding: 6px 12px;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 13px;
       pointer-events: none;
       display: none;
       z-index: 999;
-      border: 1px solid #38bdf8;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      border: 1px solid #d8f3dc;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     /* 国家信息面板 */
@@ -308,30 +310,29 @@
       right: 24px;
       width: 280px;
       max-height: 70vh;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      background: white;
+      border: 1px solid #d8f3dc;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       padding: 16px;
       z-index: 9999;
       display: none;
       overflow-y: auto;
-      backdrop-filter: blur(8px);
     }
 
     #country-info-panel h4 {
       font-size: 16px;
       margin-bottom: 12px;
-      color: #38bdf8;
-      border-bottom: 1px solid #334155;
+      color: #2d6a4f;
+      border-bottom: 1px solid #d8f3dc;
       padding-bottom: 8px;
     }
 
     .country-column-item {
       font-size: 13px;
       padding: 6px 0;
-      color: #cbd5e1;
-      border-bottom: 1px dashed #334155;
+      color: #2b5a47;
+      border-bottom: 1px dashed #d8f3dc;
     }
 
     /* 地图容器 */
@@ -343,7 +344,7 @@
       padding: 16px;
       overflow: hidden;
       width: 100%;
-      background: #0a0f1a;
+      background: #ffffff;
     }
 
     #svg-container svg {
@@ -351,6 +352,9 @@
       max-height: 100%;
       object-fit: contain;
       display: block;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
     }
 
     /* 模态框 */
@@ -360,7 +364,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.4);
       display: none;
       align-items: center;
       justify-content: center;
@@ -369,12 +373,16 @@
     }
 
     .modal-content {
-      background: #1e293b;
+      background: white;
       padding: 24px;
-      border-radius: 20px;
+      border-radius: 24px;
       width: 450px;
-      border: 1px solid #334155;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      border: 1px solid #d8f3dc;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .modal-content h3 {
+      color: #2d6a4f;
     }
 
     @media (max-width: 768px) {
@@ -431,11 +439,11 @@
   <!-- 数值输入弹窗 -->
   <div class="modal" id="number-input-modal">
     <div class="modal-content">
-      <h3 style="margin-bottom:16px;color:#38bdf8;">输入数值</h3>
-      <input type="number" id="number-value" placeholder="输入数值" style="width:100%;padding:10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;margin-bottom:16px;">
+      <h3 style="margin-bottom:16px;">📝 输入数值</h3>
+      <input type="number" id="number-value" placeholder="输入数值" style="width:100%;padding:12px;border-radius:12px;border:1px solid #d8f3dc;background:#f8fafc;color:#2d6a4f;margin-bottom:16px;outline:none;">
       <div style="display:flex;gap:12px;justify-content:flex-end;">
-        <button id="number-cancel" style="padding:8px 20px;background:#475569;border:none;border-radius:8px;color:#fff;cursor:pointer;">取消</button>
-        <button id="number-confirm" style="padding:8px 20px;background:#3b82f6;border:none;border-radius:8px;color:#fff;cursor:pointer;">确定</button>
+        <button id="number-cancel" style="padding:8px 20px;background:#e2e8f0;border:none;border-radius:30px;color:#2d6a4f;cursor:pointer;">取消</button>
+        <button id="number-confirm" style="padding:8px 20px;background:#2d6a4f;border:none;border-radius:30px;color:white;cursor:pointer;">确定</button>
       </div>
     </div>
   </div>
@@ -444,15 +452,15 @@
   <div class="modal" id="edit-mode-modal">
     <div class="modal-content" style="width:500px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <h3 style="color:#38bdf8;" id="edit-modal-title">编辑列</h3>
-        <span id="edit-modal-close" style="cursor:pointer;font-size:24px;color:#94a3b8;">&times;</span>
+        <h3 id="edit-modal-title">编辑列</h3>
+        <span id="edit-modal-close" style="cursor:pointer;font-size:24px;color:#95d5b2;">&times;</span>
       </div>
-      <p id="edit-modal-hint" style="margin-bottom:16px;color:#94a3b8;">点击地图上的国家开始编辑</p>
+      <p id="edit-modal-hint" style="margin-bottom:16px;color:#52b788;">点击地图上的国家开始编辑</p>
       <div id="edit-modal-status" style="max-height:300px;overflow-y:auto;margin-bottom:16px;">
-        <div style="color:#64748b;text-align:center;">暂无编辑记录</div>
+        <div style="color:#95d5b2;text-align:center;">暂无编辑记录</div>
       </div>
       <div style="display:flex;justify-content:flex-end;">
-        <button id="edit-modal-finish" style="padding:8px 24px;background:#10b981;border:none;border-radius:8px;color:#fff;cursor:pointer;">完成编辑</button>
+        <button id="edit-modal-finish" style="padding:8px 24px;background:#2d6a4f;border:none;border-radius:30px;color:white;cursor:pointer;">完成编辑</button>
       </div>
     </div>
   </div>
@@ -465,8 +473,8 @@
     let selectedColumns = [];
     let columnModes = {};
     let currentEditColumn = { name: "", type: "", mode: "", active: false };
-    let filterOnlyMatch = false;  // 新增：仅显示匹配开关
-    let currentMatchCache = new Map(); // 缓存匹配结果
+    let filterOnlyMatch = false;
+    let currentMatchCache = new Map();
 
     function normalizeCountryName(name) {
       if (!name) return "";
@@ -486,7 +494,6 @@
       return newRow;
     }
 
-    // ============ 核心：交集判断逻辑 ============
     function doesCountryMatch(row) {
       if (selectedColumns.length === 0) return true;
       
@@ -495,10 +502,8 @@
         const value = Number(row[col] || 0);
         
         if (mode === "precise") {
-          // 精确模式：必须满足该列 > 0
           if (value <= 0) return false;
         }
-        // 模糊模式：不参与强制过滤，只影响颜色深浅
       }
       return true;
     }
@@ -525,7 +530,6 @@
       document.getElementById("total-count").innerText = csvData.length;
     }
 
-    // ============ 地图颜色逻辑（修复后） ============
     function updateCountryColor(path, countryKey, originalName) {
       let countryRow = getCountryRow(countryKey);
       if (!countryRow) {
@@ -535,47 +539,40 @@
 
       const matches = currentMatchCache.get(countryKey) ?? doesCountryMatch(countryRow);
       
-      // 仅显示匹配模式：不匹配则隐藏
       if (filterOnlyMatch && !matches) {
         path.style.display = "none";
         return;
       }
       path.style.display = "";
 
-      // 编辑模式着色
       if (currentEditColumn.active && currentEditColumn.name) {
         const val = Number(countryRow[currentEditColumn.name] || 0);
         if (currentEditColumn.type === "boolean") {
-          path.style.fill = val === 1 ? "#ef4444" : "#334155";
+          path.style.fill = val === 1 ? "#e63946" : "#d8f3dc";
         } else {
           const allValues = csvData.map(r => Number(r[currentEditColumn.name] || 0));
           const max = Math.max(...allValues, 1);
           const intensity = Math.min(val / max, 1);
-          path.style.fill = `rgb(239, ${Math.floor(68 + (187 * (1-intensity)))}, ${Math.floor(68 + (187 * (1-intensity)))})`;
+          path.style.fill = `rgb(45, ${Math.floor(106 + (167 * (1-intensity)))}, ${Math.floor(79)})`;
         }
         return;
       }
 
-      // 正常筛选模式
       if (selectedColumns.length === 0 || !matches) {
-        path.style.fill = "#334155";
+        path.style.fill = "#d8f3dc";
         return;
       }
 
-      // 交集匹配成功：根据总分上色
       const total = getCountryScore(countryRow);
       const allScores = csvData.filter(r => currentMatchCache.get(normalizeCountryName(r["国家"]))).map(r => getCountryScore(r));
       const maxScore = Math.max(...allScores, 1);
       const intensity = Math.min(total / maxScore, 1);
       
-      // 渐变配色：绿色 → 黄色 → 红色
-      if (intensity < 0.33) {
-        path.style.fill = `rgb(34, ${Math.floor(197 + (58 * intensity/0.33))}, ${Math.floor(94)})`;
-      } else if (intensity < 0.66) {
-        path.style.fill = `rgb(${Math.floor(234 + (21 * (intensity-0.33)/0.33))}, ${Math.floor(179 + (76 * (intensity-0.33)/0.33))}, ${Math.floor(8)})`;
-      } else {
-        path.style.fill = `rgb(239, ${Math.floor(68 - (28 * (intensity-0.66)/0.34))}, ${Math.floor(68)})`;
-      }
+      // 清新渐变：浅绿 → 深绿
+      const r = 45 + Math.floor(150 * (1 - intensity));
+      const g = 106 + Math.floor(94 * (1 - intensity));
+      const b = 79;
+      path.style.fill = `rgb(${Math.min(r, 195)}, ${Math.min(g, 200)}, ${b})`;
     }
 
     function refreshMapColors() {
@@ -589,13 +586,11 @@
       });
     }
 
-    // ============ 筛选开关 ============
     function setFilterOnlyMatch(enabled) {
       filterOnlyMatch = enabled;
       refreshMapColors();
     }
 
-    // ============ API 调用（保持原有） ============
     async function apiFetch(url, options = {}) {
       try {
         const res = await fetch(url, {
@@ -676,7 +671,6 @@
       setTimeout(() => el.classList.remove('active'), 2000);
     }
 
-    // ============ UI 渲染 ============
     function renderSelectedColumns() {
       const box = document.getElementById("selected-columns");
       if (!box) return;
@@ -767,7 +761,6 @@
       resEl.classList.add("active");
     }
 
-    // ============ 国家点击处理 ============
     function showCountryInfoPanel(countryKey, countryName) {
       const panel = document.getElementById("country-info-panel");
       const title = document.getElementById("country-info-title");
@@ -778,7 +771,7 @@
       
       const validCols = csvHeaders.filter(h => h !== "国家" && Number(row[h] || 0) !== 0);
       title.textContent = countryName;
-      list.innerHTML = validCols.length ? validCols.map(c => `<div class="country-column-item">${c}</div>`).join('') : '<div style="color:#64748b;">无激活数据</div>';
+      list.innerHTML = validCols.length ? validCols.map(c => `<div class="country-column-item">${c}</div>`).join('') : '<div style="color:#95d5b2;">无激活数据</div>';
       panel.style.display = "block";
     }
 
@@ -833,8 +826,8 @@
       if (!statusDiv) return;
       if (statusDiv.children[0]?.innerText === "暂无编辑记录") statusDiv.innerHTML = "";
       const item = document.createElement("div");
-      item.style.cssText = "display:flex;justify-content:space-between;padding:8px;background:#0f172a;border-radius:8px;margin-bottom:6px;";
-      item.innerHTML = `<span>${countryName}</span><span style="color:#10b981;">= ${value}</span>`;
+      item.style.cssText = "display:flex;justify-content:space-between;padding:8px;background:#f0fdf4;border-radius:12px;margin-bottom:6px;";
+      item.innerHTML = `<span>${countryName}</span><span style="color:#2d6a4f;font-weight:bold;">= ${value}</span>`;
       statusDiv.prepend(item);
     }
 
@@ -846,7 +839,6 @@
       }
     }
 
-    // ============ 初始化地图 ============
     async function init() {
       try {
         const svgCode = await fetch("world.svg").then(res => res.text());
@@ -915,9 +907,9 @@
         document.getElementById("edit-status").classList.remove("active");
         document.getElementById("cancel-btn").style.display = "none";
         
-        document.getElementById("edit-modal-title").innerText = `编辑列：${name}`;
-        document.getElementById("edit-modal-hint").innerHTML = `类型：${type === "boolean" ? "布尔（点击国家切换 0/1）" : "数值（点击国家弹出输入框）"}`;
-        document.getElementById("edit-modal-status").innerHTML = '<div style="color:#64748b;text-align:center;">暂无编辑记录</div>';
+        document.getElementById("edit-modal-title").innerText = `✏️ 编辑列：${name}`;
+        document.getElementById("edit-modal-hint").innerHTML = `📌 类型：${type === "boolean" ? "布尔（点击国家切换 0/1）" : "数值（点击国家弹出输入框）"}`;
+        document.getElementById("edit-modal-status").innerHTML = '<div style="color:#95d5b2;text-align:center;">暂无编辑记录</div>';
         document.getElementById("edit-mode-modal").style.display = "flex";
         refreshMapColors();
         showSyncStatus();
@@ -945,7 +937,6 @@
         document.getElementById("edit-mode-modal").style.display = "none";
       };
       
-      // 仅显示匹配开关
       const filterToggle = document.getElementById("filter-only-match");
       filterToggle.onchange = (e) => {
         setFilterOnlyMatch(e.target.checked);
