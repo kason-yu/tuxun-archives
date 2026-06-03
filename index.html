@@ -22,14 +22,14 @@
             padding: 2rem 1.5rem;
         }
 
-        /* 半透明白色遮罩层，让背景图透出但文字清晰 */
+        /* 半透明白色遮罩 */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.82);
             backdrop-filter: blur(2px);
             z-index: 0;
         }
@@ -41,31 +41,30 @@
             z-index: 1;
         }
 
-        /* ========== 头部区域 ========== */
+        /* 头部 */
         .hero {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
             animation: fadeInDown 0.5s ease;
         }
 
         .hero h1 {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             color: #2d6a4f;
             margin-bottom: 0.5rem;
-            letter-spacing: -0.01em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
         }
 
         .hero p {
             color: #40916c;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 500;
         }
 
         /* 搜索框 */
         .search-wrapper {
             max-width: 450px;
-            margin: 1.5rem auto 0;
+            margin: 1.2rem auto 0;
         }
 
         .search-box {
@@ -75,7 +74,6 @@
             border-radius: 50px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             border: 1px solid #d8f3dc;
-            transition: all 0.2s;
         }
 
         .search-box:focus-within {
@@ -93,9 +91,9 @@
             flex: 1;
             background: transparent;
             border: none;
-            padding: 0.85rem 1rem;
+            padding: 0.8rem 1rem;
             color: #2d6a4f;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             outline: none;
         }
 
@@ -107,11 +105,10 @@
             background: #2d6a4f;
             border: none;
             border-radius: 50px;
-            padding: 0.5rem 1.3rem;
+            padding: 0.45rem 1.2rem;
             margin: 0.25rem;
             color: white;
-            font-size: 0.85rem;
-            font-weight: 500;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -125,16 +122,16 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0.6rem;
-            margin-top: 1rem;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
         }
 
         .quick-tag {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(4px);
-            padding: 0.35rem 1.1rem;
+            padding: 0.3rem 1rem;
             border-radius: 40px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #2d6a4f;
             cursor: pointer;
             transition: all 0.2s;
@@ -145,68 +142,111 @@
         .quick-tag:hover {
             background: #2d6a4f;
             color: white;
-            border-color: #2d6a4f;
         }
 
-        /* ========== 卡片网格 ========== */
-        .categories-grid {
+        /* ========== 核心工具区域 - 一行显示 ========== */
+        .core-tools {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d6a4f;
+            margin-bottom: 1rem;
+            padding-left: 0.5rem;
+            border-left: 4px solid #2d6a4f;
+        }
+
+        .core-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
         }
 
-        /* 卡片样式 - 清新白色毛玻璃 */
-        .category-card {
-            background: rgba(255, 255, 255, 0.85);
+        .core-card {
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(8px);
-            border-radius: 1.5rem;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            text-decoration: none;
             border: 1px solid rgba(45, 106, 79, 0.15);
-            overflow: hidden;
-            transition: all 0.3s ease;
-            animation: fadeInUp 0.5s ease backwards;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.25s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
-        .category-card:hover {
-            transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 12px 28px rgba(45, 106, 79, 0.12);
+        .core-card:hover {
+            transform: translateY(-3px);
+            background: white;
+            box-shadow: 0 8px 20px rgba(45, 106, 79, 0.12);
             border-color: rgba(45, 106, 79, 0.25);
         }
 
-        /* 卡片头部 */
+        .core-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .core-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2d6a4f;
+            margin-bottom: 0.25rem;
+        }
+
+        .core-desc {
+            font-size: 0.7rem;
+            color: #74c69d;
+        }
+
+        /* ========== 其他工具卡片网格 ========== */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 1.2rem;
+            border: 1px solid rgba(45, 106, 79, 0.12);
+            overflow: hidden;
+            transition: all 0.25s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .category-card:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(45, 106, 79, 0.1);
+        }
+
         .card-header {
-            padding: 1rem 1.25rem;
-            background: rgba(45, 106, 79, 0.06);
+            padding: 0.8rem 1rem;
+            background: rgba(45, 106, 79, 0.05);
             border-bottom: 1px solid rgba(45, 106, 79, 0.1);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: background 0.2s;
         }
 
-        .card-header:hover {
-            background: rgba(45, 106, 79, 0.1);
-        }
-
-        .card-header h2 {
-            font-size: 1.2rem;
+        .card-header h3 {
+            font-size: 1rem;
             font-weight: 600;
             color: #2d6a4f;
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        .card-header h2 span:first-child {
-            font-size: 1.3rem;
+            gap: 8px;
         }
 
         .toggle-icon {
             color: #95d5b2;
-            font-size: 1rem;
-            transition: transform 0.25s;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
         }
 
         .category-card.collapsed .toggle-icon {
@@ -217,137 +257,152 @@
             display: none;
         }
 
-        /* 卡片内容 */
         .card-content {
-            padding: 1rem;
+            padding: 0.8rem;
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.3rem;
         }
 
-        /* 子分类 */
         .subcategory {
-            margin-top: 0.25rem;
+            margin-top: 0.2rem;
         }
 
         .subcategory-title {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             color: #74c69d;
-            padding: 0.5rem 0 0.25rem 0;
-            margin-bottom: 0.3rem;
-            border-bottom: 1px dashed rgba(45, 106, 79, 0.2);
-            font-weight: 600;
+            padding: 0.4rem 0 0.2rem 0;
+            border-bottom: 1px dashed rgba(45, 106, 79, 0.15);
         }
 
-        /* 链接样式 - 清新风格 */
         .tool-link {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.6rem 0.9rem;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 0.9rem;
+            padding: 0.5rem 0.7rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 0.7rem;
             color: #2b5a47;
             text-decoration: none;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             transition: all 0.2s;
-            margin-bottom: 0.3rem;
-            border: 1px solid transparent;
         }
 
         .tool-link:hover {
             background: #d8f3dc;
             color: #1b4d3e;
             transform: translateX(4px);
-            border-color: #b7e4c7;
         }
 
         .tool-name {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .tool-icon {
-            font-size: 1rem;
-            width: 24px;
+            font-size: 0.9rem;
+            width: 22px;
             text-align: center;
         }
 
         .badge {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             background: #d8f3dc;
-            padding: 2px 8px;
-            border-radius: 30px;
+            padding: 2px 6px;
+            border-radius: 20px;
             color: #2d6a4f;
-            margin-left: 8px;
-        }
-
-        .core-badge {
-            background: #fde2e4;
-            color: #e63946;
+            margin-left: 6px;
         }
 
         .external-icon {
-            font-size: 0.7rem;
-            opacity: 0.4;
-            color: #52b788;
-        }
-
-        .disabled-link {
+            font-size: 0.65rem;
             opacity: 0.5;
-            cursor: not-allowed;
         }
 
-        .disabled-link:hover {
-            transform: none;
-            background: rgba(255, 255, 255, 0.6);
-            color: #2b5a47;
+        /* ========== 底部外链区域 - 宽版独立 ========== */
+        .footer-links {
+            margin-top: 2rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(45, 106, 79, 0.2);
         }
 
-        /* 无结果 */
-        .no-results {
-            text-align: center;
-            padding: 2.5rem;
-            color: #74c69d;
-            grid-column: 1 / -1;
+        .footer-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2d6a4f;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(8px);
-            border-radius: 1.5rem;
+            border-radius: 1rem;
+            padding: 1rem 1.2rem;
+            border: 1px solid rgba(45, 106, 79, 0.1);
         }
 
-        /* 动画 */
+        .footer-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .footer-group-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #52b788;
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #2b5a47;
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 0.3rem 0;
+            transition: all 0.2s;
+        }
+
+        .footer-link:hover {
+            color: #1b4d3e;
+            transform: translateX(4px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #74c69d;
+            background: rgba(255,255,255,0.7);
+            border-radius: 1rem;
+            grid-column: 1 / -1;
+        }
+
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @media (max-width: 900px) {
+            .core-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* 滚动条 */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #d8f3dc;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #52b788;
-            border-radius: 10px;
-        }
-
-        /* 响应式 */
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             body { padding: 1rem; }
-            .hero h1 { font-size: 1.8rem; }
+            .hero h1 { font-size: 1.6rem; }
+            .core-grid { grid-template-columns: 1fr; }
             .categories-grid { grid-template-columns: 1fr; }
-            .search-box button { padding: 0.4rem 1rem; font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -357,11 +412,10 @@
         <div class="hero">
             <h1>🗺️ 图寻 · 地理工具箱</h1>
             <p>国旗 · 车牌 · 语言 · 影像 · 道路标线 · 农业标识</p>
-            
             <div class="search-wrapper">
                 <div class="search-box">
                     <span>🔍</span>
-                    <input type="text" id="searchInput" placeholder="搜索工具... (国家/手机号/国旗)">
+                    <input type="text" id="searchInput" placeholder="搜索工具...">
                     <button id="clearSearch">清除</button>
                 </div>
                 <div class="quick-tags">
@@ -374,25 +428,26 @@
             </div>
         </div>
 
+        <!-- 核心工具区域 - 一行显示 -->
+        <div class="core-tools" id="coreTools"></div>
+
+        <!-- 其他工具区域 -->
         <div class="categories-grid" id="categoriesGrid"></div>
+
+        <!-- 底部外链区域 - 宽版独立 -->
+        <div class="footer-links" id="footerLinks"></div>
     </div>
 
     <script>
         // ============ 配置数据 ============
-        const coreTools = [
+        const coreToolsList = [
             { name: "国家筛选", path: "world_map/geo_3.html", icon: "🔍", desc: "多标签交集筛选", isCore: true },
             { name: "国家相似度", path: "world_map/map_world.html", icon: "📊", desc: "国家对比分析", isCore: true },
             { name: "世界影像查询", path: "world_img/world_img.html", icon: "🖼️", desc: "地理影像识别", isCore: true },
             { name: "世界手机号", path: "world_number/world_number.html", icon: "📱", desc: "国际号码识别", isCore: true }
         ];
 
-        const categories = [
-            {
-                name: "🎯 核心工具",
-                icon: "⚡",
-                items: coreTools,
-                isCore: true
-            },
+        const otherCategories = [
             {
                 name: "📜 代码与标识",
                 icon: "🏷️",
@@ -440,139 +495,137 @@
                         { name: "植被", path: "#", icon: "🌲", disabled: true, note: "即将上线" }
                     ]}
                 ]
-            },
-            {
-                name: "🔗 外部链接",
-                icon: "🔗",
-                external: true,
-                subcategories: [
-                    { title: "图寻生态", items: [
+            }
+        ];
+
+        const footerData = {
+            title: "🔗 外部链接",
+            groups: [
+                {
+                    title: "图寻生态",
+                    items: [
                         { name: "图寻官网", path: "https://tuxun.fun/", icon: "🌐", external: true },
                         { name: "图寻文档", path: "https://www.yuque.com/chaofun/tuxun/", icon: "📘", external: true },
                         { name: "Plonkit", path: "https://www.plonkit.net/", icon: "🗺️", external: true }
-                    ]},
-                    { title: "地图服务", items: [
+                    ]
+                },
+                {
+                    title: "地图服务",
+                    items: [
                         { name: "OpenStreetMap", path: "https://www.openstreetmap.org/", icon: "🗺️", external: true },
                         { name: "Google Maps", path: "https://www.google.com/maps/", icon: "📍", external: true },
                         { name: "百度地图", path: "https://map.baidu.com/", icon: "🇨🇳", external: true },
                         { name: "腾讯地图", path: "https://map.qq.com/", icon: "🐧", external: true },
                         { name: "天地图", path: "https://www.tianditu.gov.cn/", icon: "🛰️", external: true }
-                    ]},
-                    { title: "数据资源", items: [
+                    ]
+                },
+                {
+                    title: "数据资源",
+                    items: [
                         { name: "GBIF（生物多样性）", path: "https://www.gbif.org/", icon: "🌿", external: true },
                         { name: "查号吧（电话区号）", path: "https://www.chahaoba.com/", icon: "📞", external: true }
-                    ]}
-                ]
-            }
-        ];
+                    ]
+                }
+            ]
+        };
 
-        // 获取链接打开方式
         function getLinkTarget(item) {
             if (item.external || (item.path && item.path.startsWith('http'))) {
                 return 'target="_blank" rel="noopener noreferrer"';
             }
-            if (item.isCore === true) {
-                return 'target="_self"';
-            }
-            return 'target="_blank" rel="noopener noreferrer"';
+            return 'target="_self"';
         }
 
-        // 渲染单个链接
-        function renderToolLink(item) {
-            if (item.disabled) {
-                return `
-                    <div class="tool-link disabled-link">
-                        <div class="tool-name">
-                            <span class="tool-icon">${item.icon || '🔧'}</span>
-                            <span>${item.name}</span>
-                        </div>
-                        <span class="badge">${item.note || '开发中'}</span>
-                    </div>
+        // 渲染核心工具（一行4个）
+        function renderCoreTools() {
+            const container = document.getElementById("coreTools");
+            let html = `<div class="section-title">🎯 核心工具</div>
+                        <div class="core-grid">`;
+            for (const tool of coreToolsList) {
+                const targetAttr = getLinkTarget(tool);
+                html += `
+                    <a href="${tool.path}" class="core-card" ${targetAttr}>
+                        <div class="core-icon">${tool.icon}</div>
+                        <div class="core-name">${tool.name}</div>
+                        <div class="core-desc">${tool.desc || ''}</div>
+                    </a>
                 `;
             }
-            const targetAttr = getLinkTarget(item);
-            return `
-                <a href="${item.path}" class="tool-link" ${targetAttr}>
-                    <div class="tool-name">
-                        <span class="tool-icon">${item.icon || '🔗'}</span>
-                        <span>${item.name}</span>
-                        ${item.desc ? `<span class="badge">${item.desc}</span>` : ''}
-                    </div>
-                    ${item.external ? '<span class="external-icon">🔗</span>' : '<span class="external-icon">📂</span>'}
-                </a>
-            `;
+            html += `</div>`;
+            container.innerHTML = html;
         }
 
-        // 渲染所有分类
-        function renderCategories(filterText = '') {
-            const grid = document.getElementById('categoriesGrid');
+        // 渲染其他工具（可折叠卡片）
+        function renderOtherCategories(filterText = '') {
+            const container = document.getElementById("categoriesGrid");
             const lowerFilter = filterText.toLowerCase().trim();
             
             let hasResults = false;
             let html = '';
             
-            for (const cat of categories) {
+            for (const cat of otherCategories) {
                 let shouldShow = false;
-                let filteredItems = [];
                 let filteredSubcategories = [];
                 
                 if (lowerFilter) {
-                    if (cat.subcategories) {
-                        for (const sub of cat.subcategories) {
-                            const matchedSubItems = sub.items.filter(item =>
-                                item.name.toLowerCase().includes(lowerFilter)
-                            );
-                            if (matchedSubItems.length > 0) {
-                                filteredSubcategories.push({
-                                    title: sub.title,
-                                    items: matchedSubItems
-                                });
-                            }
+                    for (const sub of cat.subcategories) {
+                        const matchedSubItems = sub.items.filter(item =>
+                            item.name.toLowerCase().includes(lowerFilter)
+                        );
+                        if (matchedSubItems.length > 0) {
+                            filteredSubcategories.push({
+                                title: sub.title,
+                                items: matchedSubItems
+                            });
                         }
                     }
-                    if (cat.items) {
-                        filteredItems = cat.items.filter(item =>
-                            item.name.toLowerCase().includes(lowerFilter) ||
-                            (item.desc && item.desc.toLowerCase().includes(lowerFilter))
-                        );
-                    }
-                    shouldShow = filteredItems.length > 0 || filteredSubcategories.length > 0;
+                    shouldShow = filteredSubcategories.length > 0;
                 } else {
                     shouldShow = true;
-                    filteredSubcategories = cat.subcategories || [];
-                    if (cat.items) filteredItems = cat.items;
+                    filteredSubcategories = cat.subcategories;
                 }
                 
                 if (!shouldShow) continue;
                 hasResults = true;
                 
                 let contentHtml = '<div class="card-content">';
-                
-                if (filteredItems.length > 0) {
-                    for (const item of filteredItems) {
-                        contentHtml += renderToolLink(item);
-                    }
-                }
-                
-                if (filteredSubcategories.length > 0) {
-                    for (const sub of filteredSubcategories) {
-                        contentHtml += `
-                            <div class="subcategory">
-                                <div class="subcategory-title">${sub.title}</div>
-                        `;
-                        for (const item of sub.items) {
-                            contentHtml += renderToolLink(item);
+                for (const sub of filteredSubcategories) {
+                    contentHtml += `
+                        <div class="subcategory">
+                            <div class="subcategory-title">${sub.title}</div>
+                    `;
+                    for (const item of sub.items) {
+                        if (item.disabled) {
+                            contentHtml += `
+                                <div class="tool-link" style="opacity:0.5; cursor:not-allowed;">
+                                    <div class="tool-name">
+                                        <span class="tool-icon">${item.icon || '🔧'}</span>
+                                        <span>${item.name}</span>
+                                    </div>
+                                    <span class="badge">${item.note || '开发中'}</span>
+                                </div>
+                            `;
+                        } else {
+                            const targetAttr = getLinkTarget(item);
+                            contentHtml += `
+                                <a href="${item.path}" class="tool-link" ${targetAttr}>
+                                    <div class="tool-name">
+                                        <span class="tool-icon">${item.icon || '🔗'}</span>
+                                        <span>${item.name}</span>
+                                    </div>
+                                    <span class="external-icon">📂</span>
+                                </a>
+                            `;
                         }
-                        contentHtml += `</div>`;
                     }
+                    contentHtml += `</div>`;
                 }
-                
                 contentHtml += '</div>';
                 
                 html += `
                     <div class="category-card" data-category="${cat.name}">
                         <div class="card-header" onclick="toggleCard(this)">
-                            <h2><span>${cat.icon || '📁'}</span> ${cat.name}</h2>
+                            <h3><span>${cat.icon}</span> ${cat.name}</h3>
                             <span class="toggle-icon">▼</span>
                         </div>
                         ${contentHtml}
@@ -580,17 +633,46 @@
                 `;
             }
             
-            if (!hasResults) {
+            if (!hasResults && lowerFilter) {
                 html = `<div class="no-results">
-                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔍</div>
+                    <span style="font-size: 2rem;">🔍</span>
                     <p>没有找到匹配 "${filterText}" 的工具</p>
-                    <p style="font-size: 0.85rem; margin-top: 8px;">试试搜索：国家、手机号、国旗、车牌...</p>
                 </div>`;
             }
             
-            grid.innerHTML = html;
+            container.innerHTML = html;
         }
-        
+
+        // 渲染底部外链
+        function renderFooter() {
+            const container = document.getElementById("footerLinks");
+            let groupsHtml = '';
+            for (const group of footerData.groups) {
+                let itemsHtml = '';
+                for (const item of group.items) {
+                    const targetAttr = getLinkTarget(item);
+                    itemsHtml += `
+                        <a href="${item.path}" class="footer-link" ${targetAttr}>
+                            <span>${item.icon}</span> ${item.name}
+                        </a>
+                    `;
+                }
+                groupsHtml += `
+                    <div class="footer-group">
+                        <div class="footer-group-title">${group.title}</div>
+                        ${itemsHtml}
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = `
+                <div class="footer-title">🔗 外部链接</div>
+                <div class="footer-grid">
+                    ${groupsHtml}
+                </div>
+            `;
+        }
+
         // 折叠/展开
         window.toggleCard = function(header) {
             const card = header.closest('.category-card');
@@ -599,7 +681,7 @@
                 saveState();
             }
         };
-        
+
         function saveState() {
             const cards = document.querySelectorAll('.category-card');
             const states = {};
@@ -607,11 +689,11 @@
                 const name = card.getAttribute('data-category');
                 if (name) states[name] = card.classList.contains('collapsed');
             });
-            localStorage.setItem('tuxun_collapse_state', JSON.stringify(states));
+            localStorage.setItem('tuxun_category_state', JSON.stringify(states));
         }
-        
+
         function loadState() {
-            const saved = localStorage.getItem('tuxun_collapse_state');
+            const saved = localStorage.getItem('tuxun_category_state');
             if (saved) {
                 try {
                     const states = JSON.parse(saved);
@@ -625,44 +707,47 @@
                 } catch(e) {}
             }
         }
-        
+
         // 搜索功能
         let searchTimeout;
         const searchInput = document.getElementById('searchInput');
         const clearBtn = document.getElementById('clearSearch');
-        
+
+        function handleSearch() {
+            const keyword = searchInput.value;
+            renderOtherCategories(keyword);
+            setTimeout(loadState, 50);
+        }
+
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
                 clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    renderCategories(e.target.value);
-                    setTimeout(loadState, 50);
-                }, 200);
+                searchTimeout = setTimeout(handleSearch, 200);
             });
         }
-        
+
         if (clearBtn) {
             clearBtn.addEventListener('click', () => {
                 searchInput.value = '';
-                renderCategories('');
-                setTimeout(loadState, 50);
+                handleSearch();
             });
         }
-        
+
         // 快捷标签
         document.querySelectorAll('.quick-tag').forEach(tag => {
             tag.addEventListener('click', () => {
                 const searchText = tag.getAttribute('data-search');
                 if (searchInput && searchText) {
                     searchInput.value = searchText;
-                    renderCategories(searchText);
-                    setTimeout(loadState, 50);
+                    handleSearch();
                 }
             });
         });
-        
+
         // 初始化
-        renderCategories('');
+        renderCoreTools();
+        renderOtherCategories('');
+        renderFooter();
         setTimeout(loadState, 100);
     </script>
 </body>
