@@ -1,79 +1,578 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Yuki Project</title>
-        <style>
-            body {
-                background-image: url('assets/图寻学院0.png');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                margin: 0;
-                padding: 0;
-                min-height: 100vh;
-                font-family: Arial, sans-serif;
-            }
-            .container {
-                background-color: rgba(255, 255, 255, 0.8);
-                max-width: 80%;
-                margin: 40px auto;
-                padding: 30px;
-                border-radius: 10px;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-                max-height: 80vh;
-                overflow-y: auto;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>核心工具</h1>
-            <a href="world_map/geo_3.html" target="_blank">国家筛选</a><br>
-            <a href="world_img/world_img.html" target="_blank">影像查询</a><br>
-            <a href="world_map/map_world.html" target="_blank">国家相似度</a><br>
-            <a href="world_number/world_number.html" target="_blank">世界手机号</a><br>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>图寻 · 地理工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-            <h1>人文大类</h1>
-            <h2>代码</h2>
-            <a href="assets/nation_code.html" >国家代码</a><br>
-            <a href="assets/national_flag.html" >国旗</a><br>
-            <h2>建筑</h2>
-            <a href="assets/nation_code.html" >住宅建筑</a>(包含n个子类)<br>
-            <a href="assets/ele_pole.html" >电线杆</a><br>
-            <h2>语言</h2>
-            <a href="assets/latin_language.html" >拉丁字母语言</a>(包含n个子类)<br>
-            <a href="assets/SEA_language.html" >西里尔字母语言</a>(包含n个子类)<br>
-            <a href="assets/SEA_language.html" >东-南亚语言</a>(包含n个子类)<br>
-            <a href="assets/important_concept.html" >重要概念</a>(包含n个子类)
-            <h2>交通</h2>
-            <a href="road_line.html" >道路标线</a><br>
-            <a href="assets/car_code.html" >车牌</a><br>
-            <a href="assets/petrol_station.html" >加油站</a>
-            <h2>其他</h2>
-            <a href="agriculture.html" >农业</a><br>
-            <h1>自然大类</h1>
-            <a href="nation_code.html" >气候</a><br>
-            <a href="nation_code.html" >地貌</a><br>
-            <a href="nation_code.html" >土壤</a><br>
-            <a href="nation_code.html" >植被</a>
-            <h1>外链</h1>
-            <h2>图寻</h2>
-            <a href="https://tuxun.fun/" target="_blank">图寻</a><br>
-            <a href="https://www.yuque.com/chaofun/tuxun/" target="_blank">图寻文档</a><br>
-            <a href="https://www.plonkit.net/" target="_blank">plonkit</a><br>
-            <h2>地图</h2>
-            <a href="https://www.openstreetmap.org/" target="_blank">OpenStreetMap</a><br>
-            <a href="https://www.google.com/maps/" target="_blank">Google Maps</a><br>
-            <a href="https://map.baidu.com/" target="_blank">百度地图</a><br>
-            <a href="https://map.qq.com/" target="_blank">腾讯地图</a><br>
-            <a href="https://www.tianditu.gov.cn/" target="_blank">天地图</a><br>
-            <h2>植物学</h2>
-            <a href="https://www.gbif.org/" target="_blank">GBIF</a><br>
-            <h2>电话区号</h2>
-            <a href="https://www.chahaoba.com/%E9%A6%96%E9%A1%B5" target="_blank">查号吧</a><br>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            background-attachment: fixed;
+            margin: 0;
+            padding: 2rem 1rem;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 头部 */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #f0f9ff, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* 搜索框 */
+        .search-bar {
+            max-width: 400px;
+            margin: 1.5rem auto 0;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 40px;
+            color: #f1f5f9;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-bar input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .search-bar input::placeholder {
+            color: #64748b;
+        }
+
+        /* 分类网格 */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* 卡片 */
+        .category-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            animation: fadeInUp 0.5s ease backwards;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.3);
+            background: rgba(30, 41, 59, 0.75);
+        }
+
+        /* 卡片头部 */
+        .card-header {
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(129, 140, 248, 0.05));
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #38bdf8;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header h2 span {
+            font-size: 1.3rem;
+        }
+
+        .toggle-icon {
+            color: #64748b;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+
+        .category-card.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .category-card.collapsed .card-content {
+            display: none;
+        }
+
+        /* 卡片内容 */
+        .card-content {
+            padding: 0.75rem 1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* 子分类标题 */
+        .subcategory {
+            margin-top: 0.5rem;
+        }
+
+        .subcategory-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            padding: 0.5rem 0 0.25rem;
+            border-bottom: 1px dashed rgba(71, 85, 105, 0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        /* 链接样式 */
+        .tool-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.75rem;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 0.75rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-bottom: 0.25rem;
+        }
+
+        .tool-link:hover {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            transform: translateX(4px);
+        }
+
+        .tool-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-icon {
+            font-size: 1rem;
+        }
+
+        .badge {
+            font-size: 0.65rem;
+            background: rgba(56, 189, 248, 0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            color: #38bdf8;
+        }
+
+        .core-badge {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .external-icon {
+            font-size: 0.7rem;
+            opacity: 0.5;
+        }
+
+        /* 无结果提示 */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+            grid-column: 1 / -1;
+        }
+
+        /* 动画 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 10px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .hero h1 { font-size: 1.8rem; }
+            .categories-grid { grid-template-columns: 1fr; }
+            .container { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🗺️ 图寻 · 地理工具箱</h1>
+            <p>国旗 · 车牌 · 语言 · 影像 · 道路标线 · 农业标识</p>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 搜索工具... (国家筛选/手机号/国旗...)" autocomplete="off">
+            </div>
         </div>
-    </body>
+
+        <div class="categories-grid" id="categoriesGrid"></div>
+    </div>
+
+    <script>
+        // ============ 配置数据 ============
+        // 核心工具列表（站内打开，target="_self"）
+        const coreTools = [
+            { name: "国家筛选", path: "world_map/geo_3.html", icon: "🔍", desc: "多标签交集筛选" },
+            { name: "国家相似度", path: "world_map/map_world.html", icon: "📊", desc: "国家对比分析" },
+            { name: "世界影像查询", path: "world_img/world_img.html", icon: "🖼️", desc: "地理影像识别" },
+            { name: "世界手机号", path: "world_number/world_number.html", icon: "📱", desc: "国际号码识别" }
+        ];
+
+        // 完整分类配置
+        const categories = [
+            {
+                name: "🎯 核心工具",
+                icon: "⚡",
+                items: coreTools,
+                isCore: true
+            },
+            {
+                name: "📜 代码与标识",
+                icon: "🏷️",
+                subcategories: [
+                    { title: "国家标识", items: [
+                        { name: "国家代码", path: "assets/nation_code.html", icon: "🔢" },
+                        { name: "国旗", path: "assets/national_flag.html", icon: "🏁" }
+                    ]},
+                    { title: "车辆标识", items: [
+                        { name: "车牌", path: "assets/car_code.html", icon: "🚗" }
+                    ]}
+                ]
+            },
+            {
+                name: "🏛️ 人文地理",
+                icon: "🏛️",
+                subcategories: [
+                    { title: "建筑", items: [
+                        { name: "住宅建筑", path: "#", icon: "🏠", disabled: true, note: "即将上线" },
+                        { name: "电线杆", path: "assets/ele_pole.html", icon: "⚡" }
+                    ]},
+                    { title: "语言", items: [
+                        { name: "拉丁字母语言", path: "assets/latin_language.html", icon: "🔤" },
+                        { name: "西里尔字母语言", path: "assets/SEA_language.html", icon: "📖" },
+                        { name: "东-南亚语言", path: "assets/SEA_language.html", icon: "✍️" },
+                        { name: "重要概念", path: "assets/important_concept.html", icon: "💡" }
+                    ]},
+                    { title: "交通", items: [
+                        { name: "道路标线", path: "assets/road_line.html", icon: "🛣️" },
+                        { name: "加油站", path: "assets/petrol_station.html", icon: "⛽" }
+                    ]},
+                    { title: "其他", items: [
+                        { name: "农业", path: "agriculture.html", icon: "🌾" }
+                    ]}
+                ]
+            },
+            {
+                name: "🌿 自然地理",
+                icon: "🌍",
+                subcategories: [
+                    { title: "自然环境", items: [
+                        { name: "气候", path: "#", icon: "☀️", disabled: true, note: "即将上线" },
+                        { name: "地貌", path: "#", icon: "⛰️", disabled: true, note: "即将上线" },
+                        { name: "土壤", path: "#", icon: "🌱", disabled: true, note: "即将上线" },
+                        { name: "植被", path: "#", icon: "🌲", disabled: true, note: "即将上线" }
+                    ]}
+                ]
+            },
+            {
+                name: "🔗 外部链接",
+                icon: "🔗",
+                external: true,
+                subcategories: [
+                    { title: "图寻生态", items: [
+                        { name: "图寻官网", path: "https://tuxun.fun/", icon: "🌐", external: true },
+                        { name: "图寻文档", path: "https://www.yuque.com/chaofun/tuxun/", icon: "📘", external: true },
+                        { name: "Plonkit", path: "https://www.plonkit.net/", icon: "🗺️", external: true }
+                    ]},
+                    { title: "地图服务", items: [
+                        { name: "OpenStreetMap", path: "https://www.openstreetmap.org/", icon: "🗺️", external: true },
+                        { name: "Google Maps", path: "https://www.google.com/maps/", icon: "📍", external: true },
+                        { name: "百度地图", path: "https://map.baidu.com/", icon: "🇨🇳", external: true },
+                        { name: "腾讯地图", path: "https://map.qq.com/", icon: "🐧", external: true },
+                        { name: "天地图", path: "https://www.tianditu.gov.cn/", icon: "🛰️", external: true }
+                    ]},
+                    { title: "数据资源", items: [
+                        { name: "GBIF（生物多样性）", path: "https://www.gbif.org/", icon: "🌿", external: true },
+                        { name: "查号吧（电话区号）", path: "https://www.chahaoba.com/", icon: "📞", external: true }
+                    ]}
+                ]
+            }
+        ];
+
+        // 生成链接的 target 属性
+        function getLinkTarget(item) {
+            // 外部链接：新标签页打开
+            if (item.external || (item.path && item.path.startsWith('http'))) {
+                return 'target="_blank" rel="noopener noreferrer"';
+            }
+            // 核心工具：当前页面打开
+            if (item.isCore === true) {
+                return 'target="_self"';
+            }
+            // 默认：非核心工具新标签页打开
+            return 'target="_blank" rel="noopener noreferrer"';
+        }
+
+        // 生成工具链接HTML
+        function renderToolLink(item, isCore = false) {
+            if (item.disabled) {
+                return `
+                    <div class="tool-link" style="opacity: 0.5; cursor: not-allowed;">
+                        <div class="tool-name">
+                            <span class="tool-icon">${item.icon || '🔧'}</span>
+                            <span>${item.name}</span>
+                        </div>
+                        <span class="badge">${item.note || '开发中'}</span>
+                    </div>
+                `;
+            }
+            
+            const targetAttr = getLinkTarget({ ...item, isCore });
+            return `
+                <a href="${item.path}" class="tool-link" ${targetAttr}>
+                    <div class="tool-name">
+                        <span class="tool-icon">${item.icon || '🔗'}</span>
+                        <span>${item.name}</span>
+                        ${item.desc ? `<span class="badge">${item.desc}</span>` : ''}
+                    </div>
+                    ${item.external ? '<span class="external-icon">🔗</span>' : '<span class="external-icon" style="opacity:0.3;">📂</span>'}
+                </a>
+            `;
+        }
+
+        // 渲染分类卡片
+        function renderCategories(filterText = '') {
+            const grid = document.getElementById('categoriesGrid');
+            const lowerFilter = filterText.toLowerCase();
+            
+            let hasResults = false;
+            let html = '';
+            
+            for (const cat of categories) {
+                // 收集该分类下所有可搜索的文本
+                let allItems = [];
+                
+                if (cat.items) {
+                    allItems = cat.items.map(item => ({ ...item, isCore: cat.isCore }));
+                }
+                if (cat.subcategories) {
+                    for (const sub of cat.subcategories) {
+                        for (const item of sub.items) {
+                            allItems.push({ ...item, subTitle: sub.title, isCore: false });
+                        }
+                    }
+                }
+                
+                // 过滤
+                let filteredItems = allItems;
+                let filteredSubcategories = [];
+                let showCategory = false;
+                
+                if (lowerFilter) {
+                    filteredItems = allItems.filter(item => 
+                        item.name.toLowerCase().includes(lowerFilter) ||
+                        (item.subTitle && item.subTitle.toLowerCase().includes(lowerFilter)) ||
+                        (item.desc && item.desc.toLowerCase().includes(lowerFilter))
+                    );
+                    showCategory = filteredItems.length > 0;
+                    
+                    // 重新组织子分类
+                    if (cat.subcategories) {
+                        filteredSubcategories = [];
+                        for (const sub of cat.subcategories) {
+                            const filteredSubItems = sub.items.filter(item =>
+                                item.name.toLowerCase().includes(lowerFilter)
+                            );
+                            if (filteredSubItems.length > 0) {
+                                filteredSubcategories.push({
+                                    title: sub.title,
+                                    items: filteredSubItems
+                                });
+                            }
+                        }
+                    }
+                } else {
+                    showCategory = true;
+                    filteredSubcategories = cat.subcategories || [];
+                }
+                
+                if (!showCategory) continue;
+                hasResults = true;
+                
+                // 生成卡片内容
+                let contentHtml = '';
+                
+                if (cat.items && filteredItems.length > 0) {
+                    contentHtml += '<div class="card-content">';
+                    for (const item of filteredItems) {
+                        contentHtml += renderToolLink(item, cat.isCore);
+                    }
+                    contentHtml += '</div>';
+                }
+                
+                if (filteredSubcategories.length > 0) {
+                    contentHtml += '<div class="card-content">';
+                    for (const sub of filteredSubcategories) {
+                        contentHtml += `
+                            <div class="subcategory">
+                                <div class="subcategory-title">${sub.title}</div>
+                        `;
+                        for (const item of sub.items) {
+                            contentHtml += renderToolLink(item, false);
+                        }
+                        contentHtml += `</div>`;
+                    }
+                    contentHtml += '</div>';
+                }
+                
+                html += `
+                    <div class="category-card" data-category="${cat.name}">
+                        <div class="card-header" onclick="toggleCard(this)">
+                            <h2><span>${cat.icon || '📁'}</span> ${cat.name}</h2>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        ${contentHtml}
+                    </div>
+                `;
+            }
+            
+            if (!hasResults) {
+                html = `<div class="no-results">
+                    <span style="font-size: 3rem;">🔍</span>
+                    <p>没有找到匹配 "${filterText}" 的工具</p>
+                    <p style="font-size: 0.85rem; margin-top: 8px;">试试搜索：国家筛选、手机号、国旗...</p>
+                </div>`;
+            }
+            
+            grid.innerHTML = html;
+        }
+        
+        // 折叠/展开卡片
+        function toggleCard(header) {
+            const card = header.closest('.category-card');
+            if (card) {
+                card.classList.toggle('collapsed');
+            }
+        }
+        
+        // 防抖搜索
+        let searchTimeout;
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    renderCategories(e.target.value);
+                }, 200);
+            });
+        }
+        
+        // 初始化
+        renderCategories();
+        
+        // 保存折叠状态到本地存储（可选）
+        function saveCollapseState() {
+            const cards = document.querySelectorAll('.category-card');
+            const states = {};
+            cards.forEach(card => {
+                const name = card.getAttribute('data-category');
+                states[name] = card.classList.contains('collapsed');
+            });
+            localStorage.setItem('categoryCollapseState', JSON.stringify(states));
+        }
+        
+        function loadCollapseState() {
+            const saved = localStorage.getItem('categoryCollapseState');
+            if (saved) {
+                const states = JSON.parse(saved);
+                const cards = document.querySelectorAll('.category-card');
+                cards.forEach(card => {
+                    const name = card.getAttribute('data-category');
+                    if (states[name]) {
+                        card.classList.add('collapsed');
+                    }
+                });
+            }
+        }
+        
+        // 可选：启用折叠状态保存（取消注释即可）
+        // window.addEventListener('beforeunload', saveCollapseState);
+        // setTimeout(loadCollapseState, 100);
+    </script>
+</body>
 </html>
