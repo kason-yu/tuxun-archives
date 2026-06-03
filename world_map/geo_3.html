@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>国家筛选地图 - 交集变红</title>
+  <title>国家筛选地图 - 精确交集筛选</title>
   <style>
     * {
       margin: 0;
@@ -109,21 +109,6 @@
       align-items: center;
       gap: 8px;
       border: 1px solid #d8f3dc;
-    }
-
-    .mode-btn {
-      background: transparent;
-      border: 1px solid #52b788;
-      color: #2d6a4f;
-      padding: 3px 10px;
-      border-radius: 30px;
-      font-size: 11px;
-      cursor: pointer;
-    }
-
-    .mode-btn.precise {
-      background: #2d6a4f;
-      color: white;
     }
 
     .tag-close {
@@ -437,7 +422,6 @@
     let csvData = [];
     let csvHeaders = ["国家"];
     let selectedColumns = [];
-    let columnModes = {};
     let currentEditColumn = { name: "", type: "", mode: "", active: false };
     let filterOnlyMatch = false;
     let currentMatchCache = new Map();
@@ -460,19 +444,14 @@
       return newRow;
     }
 
-    // ============ 核心：交集判断（精确模式必须全部满足） ============
+    // ============ 核心：精确交集判断（所有选中的列都必须 > 0） ============
     function doesCountryMatch(row) {
       if (selectedColumns.length === 0) return true;
       
       for (const col of selectedColumns) {
-        const mode = columnModes[col] || "fuzzy";
         const value = Number(row[col] || 0);
-        
-        if (mode === "precise") {
-          // 精确模式：必须满足该列 > 0
-          if (value <= 0) return false;
-        }
-        // 模糊模式：不参与强制过滤
+        // 所有选中的列都必须 > 0 才匹配
+        if (value <= 0) return false;
       }
       return true;
     }
@@ -527,7 +506,7 @@
       }
       
       if (matches) {
-        // 符合所有精确模式条件 → 红色
+        // 符合所有选中列条件 → 红色
         path.style.fill = "#e63946";
       } else {
         // 不符合 → 白色
@@ -586,10 +565,6 @@
       const result = await apiFetch(`${API_BASE}/api/selected-columns`);
       if (result && Array.isArray(result)) {
         selectedColumns = result.filter(c => csvHeaders.includes(c));
-        const modesResult = await apiFetch(`${API_BASE}/api/selected-modes`);
-        if (modesResult) {
-          columnModes = modesResult;
-        }
         renderSelectedColumns();
         refreshMapColors();
       }
@@ -601,7 +576,7 @@
       saveTimer = setTimeout(async () => {
         await apiFetch(`${API_BASE}/api/selected-columns`, {
           method: 'PUT',
-          body: JSON.stringify({ columns: selectedColumns, modes: columnModes })
+          body: JSON.stringify({ columns: selectedColumns })
         });
       }, 300);
     }
@@ -632,7 +607,7 @@
       setTimeout(() => el.classList.remove('active'), 2000);
     }
 
-    // ============ UI 渲染 ============
+    // ============ UI 渲染（无模式切换按钮） ============
     function renderSelectedColumns() {
       const box = document.getElementById("selected-columns");
       if (!box) return;
@@ -642,17 +617,6 @@
         const tag = document.createElement("div");
         tag.className = "selected-column-tag";
 
-        const modeBtn = document.createElement("button");
-        modeBtn.className = `mode-btn ${columnModes[col] === "precise" ? "precise" : ""}`;
-        modeBtn.textContent = columnModes[col] === "precise" ? "精确" : "模糊";
-        modeBtn.onclick = async (e) => {
-          e.stopPropagation();
-          columnModes[col] = columnModes[col] === "fuzzy" ? "precise" : "fuzzy";
-          renderSelectedColumns();
-          refreshMapColors();
-          await saveSelectedColumns();
-        };
-
         const nameSpan = document.createElement("span");
         nameSpan.textContent = col;
 
@@ -661,7 +625,6 @@
         closeSpan.textContent = "×";
         closeSpan.onclick = () => {
           selectedColumns = selectedColumns.filter(c => c !== col);
-          delete columnModes[col];
           renderSelectedColumns();
           refreshMapColors();
           saveSelectedColumns();
@@ -675,7 +638,6 @@
           const result = await deleteColumn(col);
           if (!result.error) {
             selectedColumns = selectedColumns.filter(c => c !== col);
-            delete columnModes[col];
             csvHeaders = csvHeaders.filter(h => h !== col);
             csvData.forEach(r => delete r[col]);
             renderSelectedColumns();
@@ -684,7 +646,7 @@
           }
         };
 
-        tag.append(modeBtn, nameSpan, closeSpan, delBtn);
+        tag.append(nameSpan, closeSpan, delBtn);
         box.appendChild(tag);
       });
     }
@@ -710,7 +672,6 @@
         item.onclick = async () => {
           if (!selectedColumns.includes(col)) {
             selectedColumns.push(col);
-            columnModes[col] = "fuzzy";
             renderSelectedColumns();
             refreshMapColors();
             await saveSelectedColumns();
@@ -747,7 +708,6 @@
       
       if (!selectedColumns.includes(currentEditColumn.name)) {
         selectedColumns.push(currentEditColumn.name);
-        columnModes[currentEditColumn.name] = "fuzzy";
         renderSelectedColumns();
       }
       
