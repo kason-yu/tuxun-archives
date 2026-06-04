@@ -22,7 +22,6 @@
             padding: 2rem 1.5rem;
         }
 
-        /* 半透明白色遮罩 */
         .overlay {
             position: fixed;
             top: 0;
@@ -41,7 +40,6 @@
             z-index: 1;
         }
 
-        /* 头部 */
         .hero {
             text-align: center;
             margin-bottom: 2rem;
@@ -61,168 +59,56 @@
             font-weight: 500;
         }
 
-        /* ========== 核心工具区域 - 一行显示 ========== */
-        .core-tools {
+        /* 统一卡片网格 */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.2rem;
             margin-bottom: 2rem;
         }
 
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #2d6a4f;
-            margin-bottom: 1rem;
-            padding-left: 0.5rem;
-            border-left: 4px solid #2d6a4f;
-        }
-
-        .core-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-        }
-
-        .core-card {
+        /* 统一卡片样式 */
+        .tool-card {
             background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(8px);
             border-radius: 1rem;
-            padding: 1.2rem 1rem;
-            text-align: center;
+            padding: 1rem;
             text-decoration: none;
             border: 1px solid rgba(45, 106, 79, 0.15);
             transition: all 0.25s;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
 
-        .core-card:hover {
+        .tool-card:hover {
             transform: translateY(-3px);
             background: white;
             box-shadow: 0 8px 20px rgba(45, 106, 79, 0.12);
             border-color: rgba(45, 106, 79, 0.25);
         }
 
-        .core-icon {
+        .card-icon {
             font-size: 2rem;
-            margin-bottom: 0.5rem;
+            width: 50px;
+            text-align: center;
         }
 
-        .core-name {
+        .card-info {
+            flex: 1;
+        }
+
+        .card-name {
             font-size: 1rem;
             font-weight: 600;
             color: #2d6a4f;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
         }
 
-        .core-desc {
+        .card-desc {
             font-size: 0.7rem;
             color: #74c69d;
-        }
-
-        /* ========== 其他工具卡片网格 ========== */
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.2rem;
-            margin-bottom: 2rem;
-        }
-
-        .category-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            border-radius: 1.2rem;
-            border: 1px solid rgba(45, 106, 79, 0.12);
-            overflow: hidden;
-            transition: all 0.25s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-
-        .category-card:hover {
-            background: rgba(255, 255, 255, 0.95);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(45, 106, 79, 0.1);
-        }
-
-        .card-header {
-            padding: 0.8rem 1rem;
-            background: rgba(45, 106, 79, 0.05);
-            border-bottom: 1px solid rgba(45, 106, 79, 0.1);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-header h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #2d6a4f;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .toggle-icon {
-            color: #95d5b2;
-            font-size: 0.9rem;
-            transition: transform 0.2s;
-        }
-
-        .category-card.collapsed .toggle-icon {
-            transform: rotate(-90deg);
-        }
-
-        .category-card.collapsed .card-content {
-            display: none;
-        }
-
-        .card-content {
-            padding: 0.8rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-
-        .subcategory {
-            margin-top: 0.2rem;
-        }
-
-        .subcategory-title {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #74c69d;
-            padding: 0.4rem 0 0.2rem 0;
-            border-bottom: 1px dashed rgba(45, 106, 79, 0.15);
-        }
-
-        .tool-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.5rem 0.7rem;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 0.7rem;
-            color: #2b5a47;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
-        .tool-link:hover {
-            background: #d8f3dc;
-            color: #1b4d3e;
-            transform: translateX(4px);
-        }
-
-        .tool-name {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tool-icon {
-            font-size: 0.9rem;
-            width: 22px;
-            text-align: center;
         }
 
         .badge {
@@ -234,12 +120,21 @@
             margin-left: 6px;
         }
 
-        .external-icon {
-            font-size: 0.65rem;
-            opacity: 0.5;
+        /* 分类标题 */
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d6a4f;
+            margin: 1.5rem 0 1rem 0;
+            padding-left: 0.5rem;
+            border-left: 4px solid #2d6a4f;
         }
 
-        /* ========== 底部外链区域 - 宽版独立 ========== */
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        /* 底部外链区域 */
         .footer-links {
             margin-top: 2rem;
             padding-top: 1.2rem;
@@ -302,15 +197,10 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 900px) {
-            .core-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
         @media (max-width: 600px) {
             body { padding: 1rem; }
             .hero h1 { font-size: 1.6rem; }
-            .core-grid { grid-template-columns: 1fr; }
-            .categories-grid { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -319,77 +209,39 @@
     <div class="container">
         <div class="hero">
             <h1>🗺️ 图寻 · 地理工具箱</h1>
-            <p>国旗 · 车牌 · 语言 · 影像 · 道路标线 · 农业标识</p>
+            <p>国旗 · 车牌 · 语言 · 影像 · 道路标线</p>
         </div>
 
-        <!-- 核心工具区域 - 一行显示 -->
-        <div class="core-tools" id="coreTools"></div>
+        <!-- 所有工具统一网格 -->
+        <div id="toolsGrid"></div>
 
-        <!-- 其他工具区域 -->
-        <div class="categories-grid" id="categoriesGrid"></div>
-
-        <!-- 底部外链区域 - 宽版独立 -->
+        <!-- 底部外链区域 -->
         <div class="footer-links" id="footerLinks"></div>
     </div>
 
     <script>
-        // ============ 配置数据 ============
-        const coreToolsList = [
-            { name: "国家筛选", path: "world_map/geo_3.html", icon: "🔍", desc: "多标签交集筛选", isCore: true },
-            { name: "国家相似度", path: "world_map/map_world.html", icon: "📊", desc: "国家对比分析", isCore: true },
-            { name: "世界影像查询", path: "world_img/world_img.html", icon: "🖼️", desc: "地理影像识别", isCore: true },
-            { name: "世界手机号", path: "world_number/world_number.html", icon: "📱", desc: "国际号码识别", isCore: true }
-        ];
-
-        const otherCategories = [
-            {
-                name: "📜 代码与标识",
-                icon: "🏷️",
-                subcategories: [
-                    { title: "国家标识", items: [
-                        { name: "国家代码", path: "assets/nation_code.html", icon: "🔢" },
-                        { name: "国旗", path: "assets/national_flag.html", icon: "🏁" }
-                    ]},
-                    { title: "车辆标识", items: [
-                        { name: "车牌", path: "assets/car_code.html", icon: "🚗" }
-                    ]}
-                ]
-            },
-            {
-                name: "🏛️ 人文地理",
-                icon: "🏛️",
-                subcategories: [
-                    { title: "建筑", items: [
-                        { name: "住宅建筑", path: "#", icon: "🏠", disabled: true, note: "即将上线" },
-                        { name: "电线杆", path: "assets/ele_pole.html", icon: "⚡" }
-                    ]},
-                    { title: "语言", items: [
-                        { name: "拉丁字母语言", path: "assets/latin_language.html", icon: "🔤" },
-                        { name: "西里尔字母语言", path: "assets/SEA_language.html", icon: "📖" },
-                        { name: "东-南亚语言", path: "assets/SEA_language.html", icon: "✍️" },
-                        { name: "重要概念", path: "assets/important_concept.html", icon: "💡" }
-                    ]},
-                    { title: "交通", items: [
-                        { name: "道路标线", path: "assets/road_line.html", icon: "🛣️" },
-                        { name: "加油站", path: "assets/petrol_station.html", icon: "⛽" }
-                    ]},
-                    { title: "其他", items: [
-                        { name: "农业", path: "agriculture.html", icon: "🌾" }
-                    ]}
-                ]
-            },
-            {
-                name: "🌿 自然地理",
-                icon: "🌍",
-                subcategories: [
-                    { title: "自然环境", items: [
-                        { name: "气候", path: "#", icon: "☀️", disabled: true, note: "即将上线" },
-                        { name: "地貌", path: "#", icon: "⛰️", disabled: true, note: "即将上线" },
-                        { name: "土壤", path: "#", icon: "🌱", disabled: true, note: "即将上线" },
-                        { name: "植被", path: "#", icon: "🌲", disabled: true, note: "即将上线" }
-                    ]}
-                ]
-            }
+        // ============ 所有工具统一配置 ============
+        const toolsData = [
+            // 核心工具
+            { name: "国家筛选", path: "world_map/geo_3.html", icon: "🔍", desc: "多标签交集筛选", category: "核心工具" },
+            { name: "国家相似度", path: "world_map/map_world.html", icon: "📊", desc: "国家对比分析", category: "核心工具" },
+            { name: "世界影像查询", path: "world_img/world_img.html", icon: "🖼️", desc: "地理影像识别", category: "核心工具" },
+            { name: "世界手机号", path: "world_number/world_number.html", icon: "📱", desc: "国际号码识别", category: "核心工具" },
+            // 代码与标识
+            { name: "国家代码", path: "assets/nation_code.html", icon: "🔢", desc: "国家代码查询", category: "代码与标识" },
+            { name: "国旗", path: "assets/national_flag.html", icon: "🏁", desc: "世界各国国旗", category: "代码与标识" },
+            { name: "车牌", path: "assets/car_code.html", icon: "🚗", desc: "各国车牌识别", category: "代码与标识" },
+            // 人文地理 - 建筑
+            { name: "住宅建筑", path: "#", icon: "🏠", desc: "即将上线", disabled: true, category: "建筑" },
+            { name: "电线杆", path: "assets/ele_pole.html", icon: "⚡", desc: "电线杆识别", category: "建筑" },
+            // 人文地理 - 语言
+            { name: "拉丁字母语言", path: "assets/latin_language.html", icon: "🔤", desc: "拉丁字母语言识别", category: "语言" },
+            { name: "西里尔字母语言", path: "assets/SEA_language.html", icon: "📖", desc: "西里尔字母语言", category: "语言" },
+            { name: "东-南亚语言", path: "assets/SEA_language.html", icon: "✍️", desc: "东-南亚语言识别", category: "语言" },
+            { name: "重要概念", path: "assets/important_concept.html", icon: "💡", desc: "重要概念查询", category: "语言" },
+            // 人文地理 - 交通
+            { name: "道路标线", path: "assets/road_line.html", icon: "🛣️", desc: "道路标线识别", category: "交通" },
+            { name: "加油站", path: "assets/petrol_station.html", icon: "⛽", desc: "加油站品牌识别", category: "交通" }
         ];
 
         const footerData = {
@@ -429,77 +281,72 @@
             return 'target="_self"';
         }
 
-        // 渲染核心工具（一行4个）
-        function renderCoreTools() {
-            const container = document.getElementById("coreTools");
-            let html = `<div class="section-title">🎯 核心工具</div>
-                        <div class="core-grid">`;
-            for (const tool of coreToolsList) {
-                const targetAttr = getLinkTarget(tool);
-                html += `
-                    <a href="${tool.path}" class="core-card" ${targetAttr}>
-                        <div class="core-icon">${tool.icon}</div>
-                        <div class="core-name">${tool.name}</div>
-                        <div class="core-desc">${tool.desc || ''}</div>
-                    </a>
-                `;
+        // 按分类分组工具
+        function groupToolsByCategory() {
+            const groups = {};
+            for (const tool of toolsData) {
+                if (!groups[tool.category]) {
+                    groups[tool.category] = [];
+                }
+                groups[tool.category].push(tool);
             }
-            html += `</div>`;
+            return groups;
+        }
+
+        // 渲染所有工具（统一卡片形式）
+        function renderTools() {
+            const container = document.getElementById("toolsGrid");
+            const groups = groupToolsByCategory();
+            
+            // 定义分类显示顺序
+            const categoryOrder = ["核心工具", "代码与标识", "建筑", "语言", "交通"];
+            
+            let html = '';
+            for (const category of categoryOrder) {
+                const categoryTools = groups[category];
+                if (!categoryTools || categoryTools.length === 0) continue;
+                
+                html += `<div class="section-title">${getCategoryIcon(category)} ${category}</div>`;
+                html += `<div class="tools-grid">`;
+                
+                for (const tool of categoryTools) {
+                    const targetAttr = getLinkTarget(tool);
+                    if (tool.disabled) {
+                        html += `
+                            <div class="tool-card" style="opacity:0.6; cursor:not-allowed;">
+                                <div class="card-icon">${tool.icon}</div>
+                                <div class="card-info">
+                                    <div class="card-name">${tool.name} <span class="badge">${tool.desc}</span></div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <a href="${tool.path}" class="tool-card" ${targetAttr}>
+                                <div class="card-icon">${tool.icon}</div>
+                                <div class="card-info">
+                                    <div class="card-name">${tool.name}</div>
+                                    <div class="card-desc">${tool.desc || ''}</div>
+                                </div>
+                            </a>
+                        `;
+                    }
+                }
+                html += `</div>`;
+            }
+            
             container.innerHTML = html;
         }
 
-        // 渲染其他工具（可折叠卡片）
-        function renderOtherCategories() {
-            const container = document.getElementById("categoriesGrid");
-            let html = '';
-            
-            for (const cat of otherCategories) {
-                let contentHtml = '<div class="card-content">';
-                for (const sub of cat.subcategories) {
-                    contentHtml += `
-                        <div class="subcategory">
-                            <div class="subcategory-title">${sub.title}</div>
-                    `;
-                    for (const item of sub.items) {
-                        if (item.disabled) {
-                            contentHtml += `
-                                <div class="tool-link" style="opacity:0.5; cursor:not-allowed;">
-                                    <div class="tool-name">
-                                        <span class="tool-icon">${item.icon || '🔧'}</span>
-                                        <span>${item.name}</span>
-                                    </div>
-                                    <span class="badge">${item.note || '开发中'}</span>
-                                </div>
-                            `;
-                        } else {
-                            const targetAttr = getLinkTarget(item);
-                            contentHtml += `
-                                <a href="${item.path}" class="tool-link" ${targetAttr}>
-                                    <div class="tool-name">
-                                        <span class="tool-icon">${item.icon || '🔗'}</span>
-                                        <span>${item.name}</span>
-                                    </div>
-                                    <span class="external-icon">📂</span>
-                                </a>
-                            `;
-                        }
-                    }
-                    contentHtml += `</div>`;
-                }
-                contentHtml += '</div>';
-                
-                html += `
-                    <div class="category-card" data-category="${cat.name}">
-                        <div class="card-header" onclick="toggleCard(this)">
-                            <h3><span>${cat.icon}</span> ${cat.name}</h3>
-                            <span class="toggle-icon">▼</span>
-                        </div>
-                        ${contentHtml}
-                    </div>
-                `;
-            }
-            
-            container.innerHTML = html;
+        function getCategoryIcon(category) {
+            const icons = {
+                "核心工具": "🎯",
+                "代码与标识": "📜",
+                "建筑": "🏛️",
+                "语言": "🔤",
+                "交通": "🚗"
+            };
+            return icons[category] || "📁";
         }
 
         // 渲染底部外链
@@ -532,46 +379,9 @@
             `;
         }
 
-        // 折叠/展开
-        window.toggleCard = function(header) {
-            const card = header.closest('.category-card');
-            if (card) {
-                card.classList.toggle('collapsed');
-                saveState();
-            }
-        };
-
-        function saveState() {
-            const cards = document.querySelectorAll('.category-card');
-            const states = {};
-            cards.forEach(card => {
-                const name = card.getAttribute('data-category');
-                if (name) states[name] = card.classList.contains('collapsed');
-            });
-            localStorage.setItem('tuxun_category_state', JSON.stringify(states));
-        }
-
-        function loadState() {
-            const saved = localStorage.getItem('tuxun_category_state');
-            if (saved) {
-                try {
-                    const states = JSON.parse(saved);
-                    const cards = document.querySelectorAll('.category-card');
-                    cards.forEach(card => {
-                        const name = card.getAttribute('data-category');
-                        if (states[name]) {
-                            card.classList.add('collapsed');
-                        }
-                    });
-                } catch(e) {}
-            }
-        }
-
         // 初始化
-        renderCoreTools();
-        renderOtherCategories();
+        renderTools();
         renderFooter();
-        setTimeout(loadState, 100);
     </script>
 </body>
 </html>
