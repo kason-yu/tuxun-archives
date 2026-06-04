@@ -61,89 +61,6 @@
             font-weight: 500;
         }
 
-        /* 搜索框 */
-        .search-wrapper {
-            max-width: 450px;
-            margin: 1.2rem auto 0;
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: white;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            border: 1px solid #d8f3dc;
-        }
-
-        .search-box:focus-within {
-            box-shadow: 0 4px 20px rgba(45, 106, 79, 0.15);
-            border-color: #2d6a4f;
-        }
-
-        .search-box span {
-            font-size: 1.1rem;
-            padding-left: 1.2rem;
-            opacity: 0.6;
-        }
-
-        .search-box input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 0.8rem 1rem;
-            color: #2d6a4f;
-            font-size: 0.9rem;
-            outline: none;
-        }
-
-        .search-box input::placeholder {
-            color: #b7e4c7;
-        }
-
-        .search-box button {
-            background: #2d6a4f;
-            border: none;
-            border-radius: 50px;
-            padding: 0.45rem 1.2rem;
-            margin: 0.25rem;
-            color: white;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .search-box button:hover {
-            background: #1b4d3e;
-        }
-
-        /* 快捷标签 */
-        .quick-tags {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 0.8rem;
-        }
-
-        .quick-tag {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(4px);
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            color: #2d6a4f;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid #d8f3dc;
-            font-weight: 500;
-        }
-
-        .quick-tag:hover {
-            background: #2d6a4f;
-            color: white;
-        }
-
         /* ========== 核心工具区域 - 一行显示 ========== */
         .core-tools {
             margin-bottom: 2rem;
@@ -168,7 +85,7 @@
             background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(8px);
             border-radius: 1rem;
-            padding: 1rem;
+            padding: 1.2rem 1rem;
             text-align: center;
             text-decoration: none;
             border: 1px solid rgba(45, 106, 79, 0.15);
@@ -203,7 +120,7 @@
         /* ========== 其他工具卡片网格 ========== */
         .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 1.2rem;
             margin-bottom: 2rem;
         }
@@ -380,15 +297,6 @@
             transform: translateX(4px);
         }
 
-        .no-results {
-            text-align: center;
-            padding: 2rem;
-            color: #74c69d;
-            background: rgba(255,255,255,0.7);
-            border-radius: 1rem;
-            grid-column: 1 / -1;
-        }
-
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -412,20 +320,6 @@
         <div class="hero">
             <h1>🗺️ 图寻 · 地理工具箱</h1>
             <p>国旗 · 车牌 · 语言 · 影像 · 道路标线 · 农业标识</p>
-            <div class="search-wrapper">
-                <div class="search-box">
-                    <span>🔍</span>
-                    <input type="text" id="searchInput" placeholder="搜索工具...">
-                    <button id="clearSearch">清除</button>
-                </div>
-                <div class="quick-tags">
-                    <span class="quick-tag" data-search="国家筛选">🇨🇳 国家筛选</span>
-                    <span class="quick-tag" data-search="手机号">📱 手机号</span>
-                    <span class="quick-tag" data-search="国旗">🏁 国旗</span>
-                    <span class="quick-tag" data-search="车牌">🚗 车牌</span>
-                    <span class="quick-tag" data-search="道路标线">🛣️ 道路</span>
-                </div>
-            </div>
         </div>
 
         <!-- 核心工具区域 - 一行显示 -->
@@ -499,7 +393,6 @@
         ];
 
         const footerData = {
-            title: "🔗 外部链接",
             groups: [
                 {
                     title: "图寻生态",
@@ -556,40 +449,13 @@
         }
 
         // 渲染其他工具（可折叠卡片）
-        function renderOtherCategories(filterText = '') {
+        function renderOtherCategories() {
             const container = document.getElementById("categoriesGrid");
-            const lowerFilter = filterText.toLowerCase().trim();
-            
-            let hasResults = false;
             let html = '';
             
             for (const cat of otherCategories) {
-                let shouldShow = false;
-                let filteredSubcategories = [];
-                
-                if (lowerFilter) {
-                    for (const sub of cat.subcategories) {
-                        const matchedSubItems = sub.items.filter(item =>
-                            item.name.toLowerCase().includes(lowerFilter)
-                        );
-                        if (matchedSubItems.length > 0) {
-                            filteredSubcategories.push({
-                                title: sub.title,
-                                items: matchedSubItems
-                            });
-                        }
-                    }
-                    shouldShow = filteredSubcategories.length > 0;
-                } else {
-                    shouldShow = true;
-                    filteredSubcategories = cat.subcategories;
-                }
-                
-                if (!shouldShow) continue;
-                hasResults = true;
-                
                 let contentHtml = '<div class="card-content">';
-                for (const sub of filteredSubcategories) {
+                for (const sub of cat.subcategories) {
                     contentHtml += `
                         <div class="subcategory">
                             <div class="subcategory-title">${sub.title}</div>
@@ -631,13 +497,6 @@
                         ${contentHtml}
                     </div>
                 `;
-            }
-            
-            if (!hasResults && lowerFilter) {
-                html = `<div class="no-results">
-                    <span style="font-size: 2rem;">🔍</span>
-                    <p>没有找到匹配 "${filterText}" 的工具</p>
-                </div>`;
             }
             
             container.innerHTML = html;
@@ -708,45 +567,9 @@
             }
         }
 
-        // 搜索功能
-        let searchTimeout;
-        const searchInput = document.getElementById('searchInput');
-        const clearBtn = document.getElementById('clearSearch');
-
-        function handleSearch() {
-            const keyword = searchInput.value;
-            renderOtherCategories(keyword);
-            setTimeout(loadState, 50);
-        }
-
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(handleSearch, 200);
-            });
-        }
-
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                handleSearch();
-            });
-        }
-
-        // 快捷标签
-        document.querySelectorAll('.quick-tag').forEach(tag => {
-            tag.addEventListener('click', () => {
-                const searchText = tag.getAttribute('data-search');
-                if (searchInput && searchText) {
-                    searchInput.value = searchText;
-                    handleSearch();
-                }
-            });
-        });
-
         // 初始化
         renderCoreTools();
-        renderOtherCategories('');
+        renderOtherCategories();
         renderFooter();
         setTimeout(loadState, 100);
     </script>
