@@ -317,12 +317,12 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0,0,0,0.4);
-      display: none;
+      background: rgba(0,0,0,0);
+           display: none;
       align-items: center;
       justify-content: center;
       z-index: 10000;
-      backdrop-filter: blur(4px);
+      pointer-events: none;
     }
 
     .modal-content {
@@ -332,10 +332,26 @@
       width: 450px;
       border: 1px solid #d8f3dc;
       box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      pointer-events: auto;
+      cursor: default;
     }
 
     .modal-content h3 {
       color: #2d6a4f;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      user-select: none;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .draggable-modal {
+      position: fixed;
+      margin: 0;
     }
 
     @media (max-width: 768px) {
@@ -402,7 +418,7 @@
 
   <div class="modal" id="edit-mode-modal">
     <div class="modal-content" style="width:500px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;" class="drag-handle">
         <h3 id="edit-modal-title">编辑列</h3>
         <span id="edit-modal-close" style="cursor:pointer;font-size:24px;color:#95d5b2;">&times;</span>
       </div>
@@ -832,6 +848,11 @@
         document.getElementById("edit-modal-title").innerText = `✏️ 编辑列：${name}`;
         document.getElementById("edit-modal-hint").innerHTML = `📌 类型：${type === "boolean" ? "布尔（点击国家切换 0/1）" : "数值（点击国家弹出输入框）"}`;
         document.getElementById("edit-modal-status").innerHTML = '<div style="color:#95d5b2;text-align:center;">暂无编辑记录</div>';
+        const editModalContent = document.querySelector("#edit-mode-modal .modal-content");
+        editModalContent.classList.remove("draggable-modal");
+        editModalContent.style.left = "";
+        editModalContent.style.top = "";
+        editModalContent.style.right = "";
         document.getElementById("edit-mode-modal").style.display = "flex";
         refreshMapColors();
         showSyncStatus();
@@ -875,6 +896,42 @@
     }
     
     init();
+
+    // ============ 编辑弹窗拖拽功能 ============
+    (function() {
+      const modal = document.getElementById("edit-mode-modal");
+      const content = modal.querySelector(".modal-content");
+      const handle = content.querySelector(".drag-handle");
+      let isDragging = false;
+      let startX, startY, initialLeft, initialTop;
+
+      handle.addEventListener("mousedown", (e) => {
+        if (e.target.id === "edit-modal-close") return;
+        isDragging = true;
+        const rect = content.getBoundingClientRect();
+        startX = e.clientX;
+        startY = e.clientY;
+        initialLeft = rect.left;
+        initialTop = rect.top;
+        content.classList.add("draggable-modal");
+        content.style.left = initialLeft + "px";
+        content.style.top = initialTop + "px";
+        content.style.right = "auto";
+        e.preventDefault();
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        content.style.left = (initialLeft + dx) + "px";
+        content.style.top = (initialTop + dy) + "px";
+      });
+
+      document.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+    })();
   </script>
 </body>
 </html>
